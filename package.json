@@ -4,7 +4,7 @@
   "description": "Strategy and utilities to use passport.js with GraphQL server",
   "main": "lib/index.js",
   "scripts": {
-    "build": "npm run clean && babel src -d lib",
+    "build": "npm run clean && babel src -d lib --ignore src/**/*.test.js",
     "clean": "rimraf lib",
     "lint": "eslint src",
     "prepublish": "npm run lint && npm run test && npm run build",
