@@ -84,4 +84,12 @@ describe('context.login', () => {
     expect(typeof context.isAuthenticated).toBe('function');
     expect(typeof context.isUnauthenticated).toBe('function');
   });
+
+  test('passport user is copied from request', () => {
+    const req = {
+      user: { user: true },
+    };
+    const context = buildContext({ req, res: {} });
+    expect(context.user).toBe(req.user);
+  });
 });

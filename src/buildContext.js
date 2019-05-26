@@ -22,6 +22,7 @@ const buildContext = (contextParams) => {
     logout: req.logout,
     isAuthenticated: req.isAuthenticated,
     isUnauthenticated: req.isUnauthenticated,
+    user: req.user,
     ...contextParams,
   };
 };
