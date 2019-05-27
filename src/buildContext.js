@@ -19,10 +19,12 @@ const buildContext = (contextParams) => {
   return {
     authenticate: (name, options) => promisifiedAuthenticate(req, res, name, options),
     login: (user, options) => promisifiedLogin(req, user, options),
-    logout: req.logout,
-    isAuthenticated: req.isAuthenticated,
-    isUnauthenticated: req.isUnauthenticated,
-    user: req.user,
+    logout: () => req.logout(),
+    isAuthenticated: () => req.isAuthenticated(),
+    isUnauthenticated: () => req.isUnauthenticated(),
+    get user() {
+      return req.user;
+    },
     ...contextParams,
   };
 };
