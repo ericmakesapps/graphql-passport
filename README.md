@@ -15,6 +15,8 @@ context.user
 
 ## Usage
 
+For a full working example including detailed instructions visit this blog post about [how to authenticate with user credentials using GraphQL and passport](https://jkettmann.com/authentication-with-credentials-using-graphql-and-passport/). Continue reading here for a short summary.
+
 Initialize the `GraphQLLocalStrategy` and create the GraphQL context by using `buildContext`.
 
 ```js
