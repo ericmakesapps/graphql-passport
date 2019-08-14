@@ -22,7 +22,7 @@ test('authenticate calls verify with email if username is not provided', () => {
 
 test('passing request to verify callback via passReqToCallback option', () => {
   const verify = jest.fn();
-  const strategy = new GraphQLLocalStrategy({passReqToCallback: true}, verify);
+  const strategy = new GraphQLLocalStrategy({ passReqToCallback: true }, verify);
   const req = { test: 'test' };
   strategy.authenticate(req, { email: 'max@mustermann.com', password: 'qwerty' });
   expect(verify).toHaveBeenCalled();
