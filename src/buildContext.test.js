@@ -11,10 +11,7 @@ describe('context.authenticate', () => {
     await context.authenticate('strategy-name', options);
 
     expect(passport.authenticateMiddleware).toHaveBeenCalledWith(req, res);
-    expect(passport.authenticate).toHaveBeenCalled();
-    expect(passport.authenticate.mock.calls[0][0]).toBe('strategy-name');
-    expect(passport.authenticate.mock.calls[0][1]).toBe(options);
-    expect(typeof passport.authenticate.mock.calls[0][2]).toBe('function');
+    expect(passport.authenticate).toHaveBeenCalledWith('strategy-name', options, expect.any(Function));
   });
 
   test('resolves with user and info data', async () => {
@@ -50,10 +47,7 @@ describe('context.login', () => {
     const user = { email: 'max@mustermann.com', password: 'qwerty' };
     await context.login(user, options);
 
-    expect(req.login).toHaveBeenCalled();
-    expect(req.login.mock.calls[0][0]).toBe(user);
-    expect(req.login.mock.calls[0][1]).toBe(options);
-    expect(typeof req.login.mock.calls[0][2]).toBe('function');
+    expect(req.login).toHaveBeenCalledWith(user, options, expect.any(Function));
   });
 
   test('context.login rejects when passport returns error', async () => {
@@ -80,9 +74,11 @@ describe('context.login', () => {
       isUnauthenticated: () => {},
     };
     const context = buildContext({ req, res: {} });
-    expect(typeof context.logout).toBe('function');
-    expect(typeof context.isAuthenticated).toBe('function');
-    expect(typeof context.isUnauthenticated).toBe('function');
+    expect(context).toEqual(expect.objectContaining({
+      logout: expect.any(Function),
+      isAuthenticated: expect.any(Function),
+      isUnauthenticated: expect.any(Function),
+    }));
   });
 
   test('passport user is copied from request', () => {
