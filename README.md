@@ -51,6 +51,18 @@ app.listen({ port: PORT }, () => {
 });
 ```
 
+If you need to pass the `request` object into `GraphQLLocalStrategy`, you can pass the `passReqToCallback` option in an object as the first argument, then add it as the first argument of the verify function: 
+```js
+passport.use(
+  { passReqToCallback: true },
+  new GraphQLLocalStrategy((req, email, password, done) => {
+    // access the request object
+    const host = req.headers.host;
+    ...    
+  })
+);
+```
+
 Inside your resolvers you can call `context.authenticate` to authenticate the user with the given credentials. If you want to use `expression-session` as well you need to call `context.login(user)` after `authenticate`.
 
 ```js
