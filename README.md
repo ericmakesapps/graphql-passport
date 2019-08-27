@@ -54,8 +54,7 @@ app.listen({ port: PORT }, () => {
 If you need to pass the `request` object into `GraphQLLocalStrategy`, you can pass the `passReqToCallback` option in an object as the first argument, then add it as the first argument of the verify function: 
 ```js
 passport.use(
-  { passReqToCallback: true },
-  new GraphQLLocalStrategy((req, email, password, done) => {
+  new GraphQLLocalStrategy( { passReqToCallback: true }, (req, email, password, done) => {
     // access the request object
     const host = req.headers.host;
     ...    
