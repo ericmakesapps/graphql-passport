@@ -1,6 +1,6 @@
 {
   "name": "graphql-passport",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "Strategy and utilities to use passport.js with GraphQL server",
   "main": "lib/index.js",
   "scripts": {
