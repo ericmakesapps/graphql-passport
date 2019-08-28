@@ -20,6 +20,18 @@ test('authenticate calls verify with email if username is not provided', () => {
   expect(typeof verify.mock.calls[0][2]).toBe('function');
 });
 
+test('passing request to verify callback via passReqToCallback option', () => {
+  const verify = jest.fn();
+  const strategy = new GraphQLLocalStrategy({ passReqToCallback: true }, verify);
+  const req = { test: 'test' };
+  strategy.authenticate(req, { email: 'max@mustermann.com', password: 'qwerty' });
+  expect(verify).toHaveBeenCalled();
+  expect(verify.mock.calls[0][0]).toBe(req);
+  expect(verify.mock.calls[0][1]).toBe('max@mustermann.com');
+  expect(verify.mock.calls[0][2]).toBe('qwerty');
+  expect(typeof verify.mock.calls[0][3]).toBe('function');
+});
+
 test('done callback calls strategy.success if user is provided', () => {
   const verify = jest.fn();
   const strategy = new GraphQLLocalStrategy(verify);
