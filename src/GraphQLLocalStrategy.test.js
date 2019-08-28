@@ -4,20 +4,22 @@ test('authenticate calls verify with username as default', () => {
   const verify = jest.fn();
   const strategy = new GraphQLLocalStrategy(verify);
   strategy.authenticate({}, { username: 'some-username', password: 'qwerty' });
-  expect(verify).toHaveBeenCalled();
-  expect(verify.mock.calls[0][0]).toBe('some-username');
-  expect(verify.mock.calls[0][1]).toBe('qwerty');
-  expect(typeof verify.mock.calls[0][2]).toBe('function');
+  expect(verify).toHaveBeenCalledWith(
+    'some-username',
+    'qwerty',
+    expect.any(Function),
+  );
 });
 
 test('authenticate calls verify with email if username is not provided', () => {
   const verify = jest.fn();
   const strategy = new GraphQLLocalStrategy(verify);
   strategy.authenticate({}, { email: 'max@mustermann.com', password: 'qwerty' });
-  expect(verify).toHaveBeenCalled();
-  expect(verify.mock.calls[0][0]).toBe('max@mustermann.com');
-  expect(verify.mock.calls[0][1]).toBe('qwerty');
-  expect(typeof verify.mock.calls[0][2]).toBe('function');
+  expect(verify).toHaveBeenCalledWith(
+    'max@mustermann.com',
+    'qwerty',
+    expect.any(Function),
+  );
 });
 
 test('passing request to verify callback via passReqToCallback option', () => {
@@ -25,11 +27,12 @@ test('passing request to verify callback via passReqToCallback option', () => {
   const strategy = new GraphQLLocalStrategy({ passReqToCallback: true }, verify);
   const req = { test: 'test' };
   strategy.authenticate(req, { email: 'max@mustermann.com', password: 'qwerty' });
-  expect(verify).toHaveBeenCalled();
-  expect(verify.mock.calls[0][0]).toBe(req);
-  expect(verify.mock.calls[0][1]).toBe('max@mustermann.com');
-  expect(verify.mock.calls[0][2]).toBe('qwerty');
-  expect(typeof verify.mock.calls[0][3]).toBe('function');
+  expect(verify).toHaveBeenCalledWith(
+    req,
+    'max@mustermann.com',
+    'qwerty',
+    expect.any(Function),
+  );
 });
 
 test('done callback calls strategy.success if user is provided', () => {
