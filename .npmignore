@@ -1,0 +1,5 @@
+__mocks__
+.vscode
+node_modules
+.git*
+README.md
