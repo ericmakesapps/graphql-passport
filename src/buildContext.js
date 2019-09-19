@@ -25,6 +25,7 @@ const buildContext = (contextParams) => {
     get user() {
       return req.user;
     },
+    getUser: () => req.user,
     ...contextParams,
   };
 };
