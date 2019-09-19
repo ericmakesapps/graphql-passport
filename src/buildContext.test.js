@@ -88,4 +88,12 @@ describe('context.login', () => {
     const context = buildContext({ req, res: {} });
     expect(context.user).toBe(req.user);
   });
+
+  test('getUser returns passport user from request', () => {
+    const req = {
+      user: { user: true },
+    };
+    const context = buildContext({ req, res: {} });
+    expect(context.getUser()).toBe(req.user);
+  });
 });
