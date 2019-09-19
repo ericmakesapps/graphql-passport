@@ -8,7 +8,7 @@ context.login(user)
 context.logout()
 context.isAuthenticated()
 context.isUnauthenticated()
-context.user
+context.getUser()
 ```
 
 `authenticate` and `login` are basically `passport.authenticate` and `passport.login` wrapped in a promise. `user`, `logout`, `isAuthenticated` and `isUnauthenticated` are just copies of the corresponding passport functions and attributes.
@@ -51,13 +51,13 @@ app.listen({ port: PORT }, () => {
 });
 ```
 
-If you need to pass the `request` object into `GraphQLLocalStrategy`, you can pass the `passReqToCallback` option in an object as the first argument, then add it as the first argument of the verify function: 
+If you need to pass the `request` object into `GraphQLLocalStrategy`, you can pass the `passReqToCallback` option in an object as the first argument, then add it as the first argument of the verify function:
 ```js
 passport.use(
   new GraphQLLocalStrategy( { passReqToCallback: true }, (req, email, password, done) => {
     // access the request object
     const host = req.headers.host;
-    ...    
+    ...
   })
 );
 ```
@@ -67,7 +67,7 @@ Inside your resolvers you can call `context.authenticate` to authenticate the us
 ```js
 const resolvers = {
   Query: {
-    currentUser: (parent, args, context) => context.user,
+    currentUser: (parent, args, context) => context.getUser(),
   },
   Mutation: {
     login: async (parent, { email, password }, context) => {
