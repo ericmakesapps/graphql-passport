@@ -3,9 +3,9 @@
 Inside your resolvers you can get access to the following functions and attributes inside the context.
 
 ```js
-context.authenticate('graphql-local', { email, password })
-context.login(user)
-context.logout()
+context.authenticate('graphql-local', { email, password }) // not available for subscriptions
+context.login(user) // not available for subscriptions
+context.logout() // not available for subscriptions
 context.isAuthenticated()
 context.isUnauthenticated()
 context.getUser()
@@ -21,6 +21,7 @@ Initialize the `GraphQLLocalStrategy` and create the GraphQL context by using `b
 
 ```js
 import express from 'express';
+import session from 'express-session';
 import { ApolloServer } from 'apollo-server-express';
 import passport from 'passport';
 import { GraphQLLocalStrategy, buildContext } from 'graphql-passport';
@@ -36,7 +37,9 @@ passport.use(
 );
 
 const app = express();
+app.use(session(options)); // optional
 app.use(passport.initialize());
+app.use(passport.session()); // if session is used
 
 const server = new ApolloServer({
   typeDefs,
@@ -74,11 +77,77 @@ const resolvers = {
       // instead of email you can pass username as well
       const { user } = await context.authenticate('graphql-local', { email, password });
 
-      // call login if you want to use express-session
-      // context.login(user);
+      // only required if express-session is used
+      context.login(user);
 
       return { user }
     },
+  },
+};
+```
+
+## Usage with subscriptions
+
+When using subscriptions you may want to only expose events related to the currently logged in user. Since subscriptions use websockets they don't pass the session and Passport middlewares like queries or mutations. To be able to access the user object from the context inside the subscription resolvers you need to do some additional work.
+
+```js
+import express from 'express';
+import session from 'express-session';
+import { ApolloServer } from 'apollo-server-express';
+import passport from 'passport';
+import { GraphQLLocalStrategy, buildContext } from 'graphql-passport';
+
+...
+const sessionMiddleware = session(options); // optional
+const passportMiddleware = passport.initialize();
+const passportSessionMiddleware = passport.session(); // if session is used
+
+const app = express();
+app.use(sessionMiddleware);
+app.use(passportMiddleware);
+app.use(passportSessionMiddleware);
+
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: ({ req, res }) => buildContext({ req, res, User }),
+  subscriptions: {
+    onConnect: createOnConnect([
+      sessionMiddleware,
+      passportMiddleware,
+      passportSessionMiddleware,
+    ])
+  }
+});
+
+...
+```
+
+Now you can access `isAuthenticated()`, `isUnauthenticated()`, and `getUser()` on the context. Follwing example only allows a connection when the user is logged in. It only notifies the user if they are the receiver of the message.
+
+```js
+const resolvers = {
+  Subscription: {
+    messageReceived: {
+      subscribe: withFilter(
+        (parent, args, context) => {
+          if (context.isUnauthenticated()) {
+            throw new Error('You need to be logged in');
+          }
+          return pubSub.asyncIterator([MESSAGE_RECEIVED])
+        },
+        (payload, variables, context) => payload.messageReceived.receiverId === context.user.id,
+      ),
+    },
+  },
+  Query: { ... },
+  Mutation: {
+    ...
+    sendMessage: (parent, { text, receiverId }, context) => {
+      const message = { text, receiverId };
+      pubSub.publish(MESSAGE_RECEIVED, { messageReceived: message });
+      return message;
+    }
   },
 };
 ```

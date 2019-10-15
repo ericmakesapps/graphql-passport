@@ -86,7 +86,7 @@ describe('context.login', () => {
       user: { user: true },
     };
     const context = buildContext({ req, res: {} });
-    expect(context.user).toBe(req.user);
+    expect(context.getUser()).toBe(req.user);
   });
 
   test('getUser returns passport user from request', () => {
