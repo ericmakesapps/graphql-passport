@@ -14,18 +14,20 @@ const promisifiedLogin = (req, user, options) => new Promise(
   }),
 );
 
-const buildCommonContext = (req, additionalContext) => ({
-  isAuthenticated: () => req.isAuthenticated(),
-  isUnauthenticated: () => req.isUnauthenticated(),
-  get user() {
-    // eslint-disable-next-line no-console
-    console.warn('context.user is deprecated and will be removed. Please use context.getUser() instead');
-    return req.user;
+const buildCommonContext = (req, additionalContext) => Object.assign(
+  {
+    isAuthenticated: () => req.isAuthenticated(),
+    isUnauthenticated: () => req.isUnauthenticated(),
+    get user() {
+      // eslint-disable-next-line no-console
+      console.warn('context.user is deprecated and will be removed. Please use context.getUser() instead');
+      return req.user;
+    },
+    getUser: () => req.user,
+    req,
   },
-  getUser: () => req.user,
-  req,
-  ...additionalContext,
-});
+  additionalContext,
+);
 
 /**
  * @typedef {Object} Context
@@ -61,13 +63,15 @@ const buildContext = (contextParams) => {
     return buildCommonContext(connection.context.req, additionalContext);
   }
 
-  return {
-    authenticate: (name, options) => promisifiedAuthenticate(req, res, name, options),
-    login: (user, options) => promisifiedLogin(req, user, options),
-    logout: () => req.logout(),
-    res,
-    ...buildCommonContext(req, additionalContext),
-  };
+  return Object.assign(
+    buildCommonContext(req, additionalContext),
+    {
+      authenticate: (name, options) => promisifiedAuthenticate(req, res, name, options),
+      login: (user, options) => promisifiedLogin(req, user, options),
+      logout: () => req.logout(),
+      res,
+    }
+  );
 };
 
 export default buildContext;
