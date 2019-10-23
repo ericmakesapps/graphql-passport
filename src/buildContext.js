@@ -18,11 +18,6 @@ const buildCommonContext = (req, additionalContext) => Object.assign(
   {
     isAuthenticated: () => req.isAuthenticated(),
     isUnauthenticated: () => req.isUnauthenticated(),
-    get user() {
-      // eslint-disable-next-line no-console
-      console.warn('context.user is deprecated and will be removed. Please use context.getUser() instead');
-      return req.user;
-    },
     getUser: () => req.user,
     req,
   },
