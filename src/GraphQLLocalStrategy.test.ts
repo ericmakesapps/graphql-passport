@@ -2,6 +2,7 @@ import GraphQLLocalStrategy from './GraphQLLocalStrategy';
 
 test('authenticate calls verify with username as default', () => {
   const verify = jest.fn();
+  // @ts-ignore
   const strategy = new GraphQLLocalStrategy(verify);
   strategy.authenticate({}, { username: 'some-username', password: 'qwerty' });
   expect(verify).toHaveBeenCalledWith(
@@ -13,6 +14,7 @@ test('authenticate calls verify with username as default', () => {
 
 test('authenticate calls verify with email if username is not provided', () => {
   const verify = jest.fn();
+  // @ts-ignore
   const strategy = new GraphQLLocalStrategy(verify);
   strategy.authenticate({}, { email: 'max@mustermann.com', password: 'qwerty' });
   expect(verify).toHaveBeenCalledWith(
@@ -24,6 +26,7 @@ test('authenticate calls verify with email if username is not provided', () => {
 
 test('passing request to verify callback via passReqToCallback option', () => {
   const verify = jest.fn();
+  // @ts-ignore
   const strategy = new GraphQLLocalStrategy({ passReqToCallback: true }, verify);
   const req = { test: 'test' };
   strategy.authenticate(req, { email: 'max@mustermann.com', password: 'qwerty' });
@@ -37,6 +40,7 @@ test('passing request to verify callback via passReqToCallback option', () => {
 
 test('done callback calls strategy.success if user is provided', () => {
   const verify = jest.fn();
+  // @ts-ignore
   const strategy = new GraphQLLocalStrategy(verify);
   strategy.success = jest.fn();
   strategy.authenticate({}, { email: 'max@mustermann.com', password: 'qwerty' });
@@ -47,6 +51,7 @@ test('done callback calls strategy.success if user is provided', () => {
 
 test('done callback calls strategy.error if error is provided', () => {
   const verify = jest.fn();
+  // @ts-ignore
   const strategy = new GraphQLLocalStrategy(verify);
   strategy.error = jest.fn();
   strategy.authenticate({}, { email: 'max@mustermann.com', password: 'qwerty' });
@@ -57,6 +62,7 @@ test('done callback calls strategy.error if error is provided', () => {
 
 test('done callback calls strategy.fail with info if user is not provided', () => {
   const verify = jest.fn();
+  // @ts-ignore
   const strategy = new GraphQLLocalStrategy(verify);
   strategy.fail = jest.fn();
   strategy.authenticate({}, { email: 'max@mustermann.com', password: 'qwerty' });

@@ -1,12 +1,18 @@
 {
-  "parser": "babel-eslint",
-  "env": {
-    "jest": true,
-    "browser": true,
-    "es6": true
-  },
-  "extends": "airbnb-base/legacy",
+  "extends": ["airbnb-typescript/base"],
   "rules": {
     "comma-dangle": ["error", "always-multiline"]
-  }
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/*.spec.ts",
+        "**/*.test.ts",
+        "**/__mocks__/*.ts"
+      ],
+      "env": {
+        "jest": true
+      }
+    }
+  ]
 }

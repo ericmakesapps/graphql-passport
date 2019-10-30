@@ -1,21 +1,24 @@
 import passport from 'passport';
-import buildContext from './buildContext';
+import buildContext, { RegularContextParams } from './buildContext';
+import { PassportRequest } from './types';
 
 describe('context.authenticate', () => {
   test('calls passport authenticate', async () => {
-    const req = { req: true };
-    const res = { res: true };
-    const context = buildContext({ req, res });
+    const req = { req: true } as any;
+    const res = { res: true } as any;
+    const params = { req, res } as RegularContextParams;
+    const context = buildContext(params);
 
     const options = { options: true };
     await context.authenticate('strategy-name', options);
 
+    // @ts-ignore
     expect(passport.authenticateMiddleware).toHaveBeenCalledWith(req, res);
     expect(passport.authenticate).toHaveBeenCalledWith('strategy-name', options, expect.any(Function));
   });
 
   test('resolves with user and info data', async () => {
-    const context = buildContext({ req: {}, res: {} });
+    const context = buildContext({ req: {}, res: {} } as RegularContextParams);
     const { user, info } = await context.authenticate('strategy-name');
     expect(user).toEqual({ id: 'user-id' });
     expect(info).toEqual({ info: true });
@@ -23,9 +26,10 @@ describe('context.authenticate', () => {
 
   test('rejects when passport returns error', async () => {
     const expectedError = new Error('authentication failed');
+    // @ts-ignore
     passport.authenticate.mockImplementationOnce((name, options, done) => done(expectedError));
-    const context = buildContext({ req: {}, res: {} });
-    let actualError;
+    const context = buildContext({ req: {}, res: {} } as RegularContextParams);
+    let actualError: Error;
 
     try {
       await context.authenticate('strategy-name');
@@ -39,9 +43,9 @@ describe('context.authenticate', () => {
 
 describe('context.login', () => {
   test('calls req.login', async () => {
-    const req = { login: jest.fn((user, options, callback) => callback(null)) };
+    const req = { login: jest.fn((user, options, callback) => callback(null)) } as any;
     const res = { res: true };
-    const context = buildContext({ req, res });
+    const context = buildContext(({ req, res } as any) as RegularContextParams);
 
     const options = { options: true };
     const user = { email: 'max@mustermann.com', password: 'qwerty' };
@@ -53,8 +57,8 @@ describe('context.login', () => {
   test('context.login rejects when passport returns error', async () => {
     const expectedError = new Error('authentication failed');
     const req = { login: jest.fn((user, options, callback) => callback(expectedError)) };
-    const context = buildContext({ req, res: {} });
-    let actualError;
+    const context = buildContext(({ req, res: {} } as any) as RegularContextParams);
+    let actualError: Error;
 
     try {
       const options = { options: true };
@@ -72,8 +76,8 @@ describe('context.login', () => {
       logout: () => {},
       isAuthenticated: () => {},
       isUnauthenticated: () => {},
-    };
-    const context = buildContext({ req, res: {} });
+    } as PassportRequest;
+    const context = buildContext({ req, res: {} as any });
     expect(context).toEqual(expect.objectContaining({
       logout: expect.any(Function),
       isAuthenticated: expect.any(Function),
@@ -84,16 +88,16 @@ describe('context.login', () => {
   test('passport user is copied from request', () => {
     const req = {
       user: { user: true },
-    };
-    const context = buildContext({ req, res: {} });
+    } as any;
+    const context = buildContext({ req, res: {} as any });
     expect(context.getUser()).toBe(req.user);
   });
 
   test('getUser returns passport user from request', () => {
     const req = {
       user: { user: true },
-    };
-    const context = buildContext({ req, res: {} });
+    } as any;
+    const context = buildContext({ req, res: {} as any });
     expect(context.getUser()).toBe(req.user);
   });
 });
