@@ -1,6 +1,6 @@
 {
   "name": "graphql-passport",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Strategy and utilities to use passport.js with GraphQL server",
   "main": "lib/index.js",
   "scripts": {
@@ -8,6 +8,7 @@
     "build:types": "tsc --emitDeclarationOnly",
     "build:js": "babel src --extensions '.ts,.tsx' --source-maps --out-dir lib --ignore src/**/*.test.ts --ignore __mocks__",
     "clean": "rimraf lib",
+    "install": "npm run build",
     "lint": "tsc --noEmit && eslint \"src/**/*.{js,ts}\" --quiet --fix",
     "check-types": "tsc",
     "watch-ts": "tsc -w",
