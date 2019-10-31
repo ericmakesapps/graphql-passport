@@ -1,10 +1,11 @@
 import GraphQLLocalStrategy from './GraphQLLocalStrategy';
+import { PassportRequest } from './types';
 
 test('authenticate calls verify with username as default', () => {
   const verify = jest.fn();
   // @ts-ignore
   const strategy = new GraphQLLocalStrategy(verify);
-  strategy.authenticate({}, { username: 'some-username', password: 'qwerty' });
+  strategy.authenticate({} as PassportRequest, { username: 'some-username', password: 'qwerty' });
   expect(verify).toHaveBeenCalledWith(
     'some-username',
     'qwerty',
@@ -16,7 +17,7 @@ test('authenticate calls verify with email if username is not provided', () => {
   const verify = jest.fn();
   // @ts-ignore
   const strategy = new GraphQLLocalStrategy(verify);
-  strategy.authenticate({}, { email: 'max@mustermann.com', password: 'qwerty' });
+  strategy.authenticate({} as PassportRequest, { email: 'max@mustermann.com', password: 'qwerty' });
   expect(verify).toHaveBeenCalledWith(
     'max@mustermann.com',
     'qwerty',
@@ -28,7 +29,7 @@ test('passing request to verify callback via passReqToCallback option', () => {
   const verify = jest.fn();
   // @ts-ignore
   const strategy = new GraphQLLocalStrategy({ passReqToCallback: true }, verify);
-  const req = { test: 'test' };
+  const req = ({ test: 'test' } as any) as PassportRequest;
   strategy.authenticate(req, { email: 'max@mustermann.com', password: 'qwerty' });
   expect(verify).toHaveBeenCalledWith(
     req,
@@ -43,7 +44,7 @@ test('done callback calls strategy.success if user is provided', () => {
   // @ts-ignore
   const strategy = new GraphQLLocalStrategy(verify);
   strategy.success = jest.fn();
-  strategy.authenticate({}, { email: 'max@mustermann.com', password: 'qwerty' });
+  strategy.authenticate({} as PassportRequest, { email: 'max@mustermann.com', password: 'qwerty' });
   const done = verify.mock.calls[0][2];
   done(null, { email: 'max@mustermann.com' }, { info: true });
   expect(strategy.success).toHaveBeenCalledWith({ email: 'max@mustermann.com' }, { info: true });
@@ -54,7 +55,7 @@ test('done callback calls strategy.error if error is provided', () => {
   // @ts-ignore
   const strategy = new GraphQLLocalStrategy(verify);
   strategy.error = jest.fn();
-  strategy.authenticate({}, { email: 'max@mustermann.com', password: 'qwerty' });
+  strategy.authenticate({} as PassportRequest, { email: 'max@mustermann.com', password: 'qwerty' });
   const done = verify.mock.calls[0][2];
   done(new Error('some error'));
   expect(strategy.error).toHaveBeenCalledWith(new Error('some error'));
@@ -65,8 +66,8 @@ test('done callback calls strategy.fail with info if user is not provided', () =
   // @ts-ignore
   const strategy = new GraphQLLocalStrategy(verify);
   strategy.fail = jest.fn();
-  strategy.authenticate({}, { email: 'max@mustermann.com', password: 'qwerty' });
+  strategy.authenticate({} as PassportRequest, { email: 'max@mustermann.com', password: 'qwerty' });
   const done = verify.mock.calls[0][2];
   done(null, null, { info: true });
-  expect(strategy.fail).toHaveBeenCalledWith({ info: true });
+  expect(strategy.fail).toHaveBeenCalledWith({ info: true }, 401);
 });
