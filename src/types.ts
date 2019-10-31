@@ -22,6 +22,11 @@ export interface PassportRequest {
 
   isAuthenticated(): boolean;
   isUnauthenticated(): boolean;
+
+  authenticate(
+    type: string,
+    credentials: { username: string, password: string } | { email: string, password: string },
+  ): Promise<{ user: UserTemplate }>;
 }
 
 export interface WebSocket extends ws {
