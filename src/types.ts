@@ -1,13 +1,13 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import ws from 'ws';
+import express from 'express';
 import { IncomingMessage } from 'http';
 
 // tslint:disable-next-line:no-empty-interface
-export interface AuthInfoTemplate { }
+export interface AuthInfoTemplate {}
 // tslint:disable-next-line:no-empty-interface
-export interface UserTemplate { }
+export interface UserTemplate {}
 
-export interface PassportRequest {
+export interface PassportRequest extends express.Request {
   authInfo?: AuthInfoTemplate;
   user?: UserTemplate;
 
@@ -25,7 +25,7 @@ export interface PassportRequest {
 
   authenticate(
     type: string,
-    credentials: { username: string, password: string } | { email: string, password: string },
+    credentials: { username: string; password: string } | { email: string; password: string },
   ): Promise<{ user: UserTemplate }>;
 }
 

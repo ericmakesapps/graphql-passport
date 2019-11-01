@@ -9,7 +9,7 @@ type VerifyFnWRequest = (
   req: Request | PassportRequest,
   username: unknown,
   password: unknown,
-  done: (error: any, user?: any, options?: IVerifyOptions) => void
+  done: (error: any, user?: any, options?: IVerifyOptions) => void,
 ) => void;
 
 interface GraphQLLocalStrategyOptions {
@@ -30,7 +30,9 @@ class GraphQLLocalStrategy extends PassportStrategy {
       this.verify = verify;
       this.passReqToCallback = options.passReqToCallback;
     }
-    if (!this.verify) { throw new TypeError('GraphQLLocalStrategy requires a verify callback'); }
+    if (!this.verify) {
+      throw new TypeError('GraphQLLocalStrategy requires a verify callback');
+    }
 
     this.name = 'graphql-local';
   }
@@ -41,15 +43,16 @@ class GraphQLLocalStrategy extends PassportStrategy {
 
   name: string;
 
-  authenticate(
-    req: Request,
-    options: { username?: string, email?: string, password: string },
-  ) {
+  authenticate(req: Request, options: { username?: string; email?: string; password: string }) {
     const { username, email, password } = options;
 
     const done = (err: Error, user: UserTemplate, info?: IVerifyOptions) => {
-      if (err) { return this.error(err); }
-      if (!user) { return this.fail(info, 401); }
+      if (err) {
+        return this.error(err);
+      }
+      if (!user) {
+        return this.fail(info, 401);
+      }
       return this.success(user, info);
     };
 
