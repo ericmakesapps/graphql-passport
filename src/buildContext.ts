@@ -1,13 +1,13 @@
 import passport, { AuthenticateOptions } from 'passport';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Response } from 'express';
-import { PassportRequest, UserTemplate } from './types';
+import express from 'express';
+import { PassportRequest, UserTemplate, AuthenticateReturn } from './types';
 
 const promisifiedAuthenticate = (
   req: PassportRequest,
-  res: Response, name: string,
+  res: express.Response, name: string,
   options: AuthenticateOptions,
-) => new Promise(
+) => new Promise<AuthenticateReturn>(
   (resolve, reject) => passport.authenticate(name, options, (err, user, info) => {
     if (err) reject(err);
     else resolve({ user, info });
@@ -18,7 +18,7 @@ const promisifiedLogin = (
   req: PassportRequest,
   user: UserTemplate,
   options: AuthenticateOptions,
-) => new Promise(
+) => new Promise<void>(
   (resolve, reject) => req.login(user, options, (err) => {
     if (err) reject(err);
     else resolve();
@@ -36,7 +36,7 @@ export interface Context extends SubscriptionContext {
   authenticate: (
     strategyName: string,
     options?: object,
-  ) => Promise<{ user: UserTemplate | undefined, info: string | undefined }>;
+  ) => Promise<AuthenticateReturn>;
   login: (user: UserTemplate, options?: object) => Promise<void>;
   logout: () => void;
 }
@@ -64,9 +64,10 @@ export interface SubscriptionContextParams {
   payload?: unknown;
 }
 
-function buildContext(contextParams: RegularContextParams): Context;
-function buildContext(contextParams: SubscriptionContextParams): SubscriptionContext;
-function buildContext(contextParams: RegularContextParams | SubscriptionContextParams) {
+
+// function buildContext(contextParams: RegularContextParams): Context;
+// function buildContext(contextParams: SubscriptionContextParams): SubscriptionContext;
+const buildContext: ContextFunction<ExpressContext, Context> = (contextParams) => {
   const {
     req, // set for queries and mutations
     res, // set for queries and mutations
@@ -81,15 +82,15 @@ function buildContext(contextParams: RegularContextParams | SubscriptionContextP
 
   return {
     ...buildCommonContext(req, additionalContext),
-    authenticate: async (
+    authenticate: (
       name: string,
       options: AuthenticateOptions,
     ) => promisifiedAuthenticate(req, res, name, options),
-    login: async (
+    login: (
       user: UserTemplate,
       options: AuthenticateOptions,
     ) => promisifiedLogin(req, user, options),
-    logout: async () => req.logout(),
+    logout: () => req.logout(),
     res,
   };
 }

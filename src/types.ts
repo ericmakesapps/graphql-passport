@@ -29,6 +29,16 @@ export interface PassportRequest {
   ): Promise<{ user: UserTemplate }>;
 }
 
+export interface IVerifyOptions {
+  info: boolean;
+  message?: string;
+}
+
+export interface AuthenticateReturn {
+  user: UserTemplate | undefined;
+  info: IVerifyOptions | undefined;
+}
+
 export interface WebSocket extends ws {
   upgradeReq: IncomingMessage & PassportRequest;
 }

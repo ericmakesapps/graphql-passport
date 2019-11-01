@@ -2,12 +2,7 @@
 import { Strategy as PassportStrategy } from 'passport-strategy';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Request } from 'express';
-import { UserTemplate, PassportRequest } from './types';
-
-interface IVerifyOptions {
-  info: boolean;
-  message?: string;
-}
+import { UserTemplate, PassportRequest, IVerifyOptions } from './types';
 
 type VerifyFn = (username: unknown, password: unknown, done: () => void) => void;
 type VerifyFnWRequest = (
