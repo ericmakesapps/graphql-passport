@@ -23,7 +23,7 @@ const promisifiedAuthentication = (
     };
 
     const authFn = passport.authenticate(name, options, done);
-    return authFn(req, res, done);
+    return authFn(req, res);
   });
 
   return p;
