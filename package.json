@@ -8,7 +8,6 @@
     "build:types": "tsc --emitDeclarationOnly",
     "build:js": "babel src --extensions '.ts,.tsx' --source-maps --out-dir lib --ignore src/**/*.test.ts --ignore __mocks__",
     "clean": "rimraf lib",
-    "install": "npm run build",
     "lint": "tsc --noEmit && eslint \"src/**/*.{js,ts}\" --quiet --fix",
     "check-types": "tsc",
     "watch-ts": "tsc -w",
@@ -29,8 +28,7 @@
   "author": "Johannes Kettmann",
   "license": "MIT",
   "dependencies": {
-    "passport-strategy": "^1.0.0",
-    "util": "^0.12.1"
+    "passport-strategy": "^1.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.5",
@@ -39,24 +37,30 @@
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-typescript": "^7.6.0",
     "@babel/runtime": "^7.5.5",
-    "@types/express": "^4.17.1",
     "@types/jest": "^24.0.21",
-    "@types/passport": "^1.0.1",
-    "@types/passport-strategy": "^0.2.35",
     "@typescript-eslint/eslint-plugin": "^2.6.0",
-    "apollo-server": "^2.9.7",
-    "apollo-server-core": "^2.9.7",
     "babel-eslint": "^10.0.3",
     "eslint": "^6.1.0",
     "eslint-config-airbnb-typescript": "^6.0.0",
     "eslint-plugin-import": "^2.18.2",
-    "express": "^4.17.1",
     "jest": "^24.9.0",
     "passport": "^0.4.0",
-    "subscriptions-transport-ws": "^0.9.16",
     "typescript": "^3.6.4"
   },
+  "optionalDependencies": {
+    "@types/express": "^4.17.1",
+    "@types/passport": "^1.0.1",
+    "@types/passport-strategy": "^0.2.35",
+    "@types/ws": "^6.0.3",
+    "express": "^4.17.1",
+    "graphql": "^14.5.8",
+    "subscriptions-transport-ws": "^0.9.16",
+    "ws": "7.x"
+  },
   "peerDependencies": {
-    "passport": "0.x"
+    "express": "4.x",
+    "passport": "0.x",
+    "subscriptions-transport-ws": "0.x",
+    "ws": "7.x | 6.x"
   }
 }

@@ -1,6 +1,5 @@
 /* eslint-disable no-param-reassign */
 import { Strategy as PassportStrategy } from 'passport-strategy';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { Request } from 'express';
 import { UserTemplate, PassportRequest, IVerifyOptions } from './types';
 

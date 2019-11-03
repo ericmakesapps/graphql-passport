@@ -1,8 +1,6 @@
 /* eslint-disable max-len */
 import passport, { AuthenticateOptions } from 'passport';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import express from 'express';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { ExecutionParams } from 'subscriptions-transport-ws';
 import { UserTemplate, AuthenticateReturn, IVerifyOptions } from './types';
 

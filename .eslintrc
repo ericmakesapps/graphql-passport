@@ -1,8 +1,7 @@
 {
   "extends": ["airbnb-typescript/base"],
   "rules": {
-    "comma-dangle": ["error", "always-multiline"],
-    "import/no-extraneous-dependencies": 0
+    "comma-dangle": ["error", "always-multiline"]
   },
   "overrides": [
     {
