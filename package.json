@@ -13,7 +13,8 @@
     "check-types": "tsc",
     "watch-ts": "tsc -w",
     "prepublish": "npm run lint && npm run test && npm run build",
-    "test": "jest src"
+    "test": "jest src",
+    "test:watch": "jest src --watch"
   },
   "repository": {
     "type": "git",
@@ -44,8 +45,9 @@
     "@types/passport-strategy": "^0.2.35",
     "@typescript-eslint/eslint-plugin": "^2.6.0",
     "apollo-server": "^2.9.7",
+    "apollo-server-core": "^2.9.7",
     "babel-eslint": "^10.0.3",
-    "eslint": "^5.16.0",
+    "eslint": "^6.1.0",
     "eslint-config-airbnb-typescript": "^6.0.0",
     "eslint-plugin-import": "^2.18.2",
     "express": "^4.17.1",
