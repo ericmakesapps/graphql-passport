@@ -75,7 +75,7 @@ const resolvers = {
   Mutation: {
     login: async (parent, { email, password }, context) => {
       // instead of email you can pass username as well
-      const { user } = await context.authenticate('graphql-local', { email, password });
+      const { user, info } = await context.authenticate('graphql-local', { email, password });
 
       // only required if express-session is used
       context.login(user);
