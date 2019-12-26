@@ -151,3 +151,32 @@ const resolvers = {
   },
 };
 ```
+
+# Typescript
+
+As the library cannot know the structure of your user object you need to add this to the global scope by writing your own "somename.d.ts" you can adapt the following template with whatever user variables that you want have added to the PassportRequest:
+
+```ts
+declare module "graphql-passport" {
+  interface PassportRequest {
+    user?: {
+      username: string;
+    };
+  }
+}
+```
+
+In your GraphQL functions you can the reference the passport context using:
+
+```ts
+const something = async (
+  parent: unknown,
+  data: SomeData,
+  context: PassportRequest
+) => {
+  const username = context.user?.name || "guest";
+
+  logger.info(`${username} is accessing 'something'`);
+  ...
+};
+```
