@@ -1,20 +1,24 @@
 import passport from 'passport';
-import buildContext, { RegularContextParams } from './buildContext';
+import buildContext, { RegularContextParams, ExpressContext } from './buildContext';
 import { PassportRequest } from './types';
 
 describe('context.authenticate', () => {
   test('calls passport authenticate', async () => {
     const req = { req: true } as any;
     const res = { res: true } as any;
-    const params = { req, res } as RegularContextParams;
-    const context = buildContext(params);
+    const params = { req, res } as ExpressContext;
+    const context = await buildContext(params);
 
     const options = { options: true };
     await context.authenticate('strategy-name', options);
 
     // @ts-ignore
     expect(passport.authenticateMiddleware).toHaveBeenCalledWith(req, res);
-    expect(passport.authenticate).toHaveBeenCalledWith('strategy-name', options, expect.any(Function));
+    expect(passport.authenticate).toHaveBeenCalledWith(
+      'strategy-name',
+      options,
+      expect.any(Function),
+    );
   });
 
   test('resolves with user and info data', async () => {
@@ -78,11 +82,13 @@ describe('context.login', () => {
       isUnauthenticated: () => {},
     } as PassportRequest;
     const context = buildContext({ req, res: {} as any });
-    expect(context).toEqual(expect.objectContaining({
-      logout: expect.any(Function),
-      isAuthenticated: expect.any(Function),
-      isUnauthenticated: expect.any(Function),
-    }));
+    expect(context).toEqual(
+      expect.objectContaining({
+        logout: expect.any(Function),
+        isAuthenticated: expect.any(Function),
+        isUnauthenticated: expect.any(Function),
+      }),
+    );
   });
 
   test('passport user is copied from request', () => {

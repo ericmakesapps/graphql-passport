@@ -22,7 +22,7 @@ const executeMiddlewares = (
     nextMiddleware(
       webSocket.upgradeReq,
       response,
-      () => executeMiddlewares(remainingMiddlewares, webSocket, resolve)
+      () => executeMiddlewares(remainingMiddlewares, webSocket, resolve),
     );
   }
 };

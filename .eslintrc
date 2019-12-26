@@ -5,11 +5,7 @@
   },
   "overrides": [
     {
-      "files": [
-        "**/*.spec.ts",
-        "**/*.test.ts",
-        "**/__mocks__/*.ts"
-      ],
+      "files": ["**/*.spec.ts", "**/*.test.ts", "**/__mocks__/*.ts"],
       "env": {
         "jest": true
       }

@@ -1,72 +1,101 @@
+/* eslint-disable max-len */
 import passport, { AuthenticateOptions } from 'passport';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { Response } from 'express';
-import { PassportRequest, UserTemplate } from './types';
+import express from 'express';
+import { ExecutionParams } from 'subscriptions-transport-ws';
+import { UserTemplate, AuthenticateReturn, IVerifyOptions } from './types';
 
-const promisifiedAuthenticate = (
-  req: PassportRequest,
-  res: Response, name: string,
+const promisifiedAuthentication = (
+  req: express.Request,
+  res: express.Response,
+  name: string,
   options: AuthenticateOptions,
-) => new Promise(
-  (resolve, reject) => passport.authenticate(name, options, (err, user, info) => {
-    if (err) reject(err);
-    else resolve({ user, info });
-  })(req, res),
-);
+) => {
+  const p = new Promise<AuthenticateReturn>((resolve, reject) => {
+    const done = (
+      err: Error | undefined,
+      user: UserTemplate | undefined,
+      info?: IVerifyOptions | undefined,
+    ) => {
+      if (err) reject(err);
+      else resolve({ user, info });
+    };
+
+    const authFn = passport.authenticate(name, options, done);
+    return authFn(req, res);
+  });
+
+  return p;
+};
 
 const promisifiedLogin = (
-  req: PassportRequest,
+  req: express.Request,
   user: UserTemplate,
   options: AuthenticateOptions,
-) => new Promise(
-  (resolve, reject) => req.login(user, options, (err) => {
-    if (err) reject(err);
-    else resolve();
-  }),
-);
+) => {
+  const p = new Promise<void>((resolve, reject) => {
+    const done = (err: Error | undefined) => {
+      if (err) reject(err);
+      else resolve();
+    };
 
-export interface SubscriptionContext {
+    req.login(user, options, done);
+  });
+
+  return p;
+};
+
+export interface Context {
   isAuthenticated: () => boolean;
   isUnauthenticated: () => boolean;
   getUser: () => UserTemplate;
-  req: PassportRequest;
-}
-
-export interface Context extends SubscriptionContext {
-  authenticate: (
-    strategyName: string,
-    options?: object,
-  ) => Promise<{ user: UserTemplate | undefined, info: string | undefined }>;
+  authenticate: (strategyName: string, options?: object) => Promise<AuthenticateReturn>;
   login: (user: UserTemplate, options?: object) => Promise<void>;
   logout: () => void;
+  req: express.Request;
+  res?: express.Response;
 }
 
-
-const buildCommonContext = (req: PassportRequest, additionalContext: {}): SubscriptionContext => ({
+const buildCommonContext = (req: express.Request, additionalContext: {}): Context => ({
   isAuthenticated: () => req.isAuthenticated(),
   isUnauthenticated: () => req.isUnauthenticated(),
   getUser: () => req.user,
+  authenticate: (strategyName: string) => {
+    throw new Error(`Authenticate (${strategyName}) not implemented for subscriptions`);
+  },
+  login: () => {
+    throw new Error('Not implemented for subscriptions');
+  },
+  logout: () => {
+    throw new Error('Not implemented for subscriptions');
+  },
   req,
   ...additionalContext,
 });
 
 export interface RegularContextParams {
-  req: PassportRequest;
-  res: Response;
+  req: express.Request;
+  res: express.Response;
   payload?: unknown;
   connection?: undefined;
 }
 
 export interface SubscriptionContextParams {
-  req: PassportRequest;
-  res: Response;
-  connection: { context: { req: PassportRequest } },
+  req: express.Request;
+  res: express.Response;
+  connection: { context: { req: express.Request } };
   payload?: unknown;
 }
 
-function buildContext(contextParams: RegularContextParams): Context;
-function buildContext(contextParams: SubscriptionContextParams): SubscriptionContext;
-function buildContext(contextParams: RegularContextParams | SubscriptionContextParams) {
+export interface ExpressContext {
+  req: express.Request;
+  res: express.Response;
+  connection?: ExecutionParams;
+  payload?: unknown;
+}
+
+// function buildContext(contextParams: RegularContextParams): Context;
+// function buildContext(contextParams: SubscriptionContextParams): SubscriptionContext;
+const buildContext = <R extends ExpressContext = ExpressContext>(contextParams: R): Context => {
   const {
     req, // set for queries and mutations
     res, // set for queries and mutations
@@ -81,17 +110,11 @@ function buildContext(contextParams: RegularContextParams | SubscriptionContextP
 
   return {
     ...buildCommonContext(req, additionalContext),
-    authenticate: async (
-      name: string,
-      options: AuthenticateOptions,
-    ) => promisifiedAuthenticate(req, res, name, options),
-    login: async (
-      user: UserTemplate,
-      options: AuthenticateOptions,
-    ) => promisifiedLogin(req, user, options),
-    logout: async () => req.logout(),
+    authenticate: (name: string, options: AuthenticateOptions) => promisifiedAuthentication(req, res, name, options),
+    login: (user: UserTemplate, options: AuthenticateOptions) => promisifiedLogin(req, user, options),
+    logout: () => req.logout(),
     res,
   };
-}
+};
 
 export default buildContext;
