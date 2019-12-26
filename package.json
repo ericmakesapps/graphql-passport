@@ -61,6 +61,6 @@
     "express": "4.x",
     "passport": "0.x",
     "subscriptions-transport-ws": "0.x",
-    "ws": "7.x | 6.x"
+    "ws": "7.x || 6.x"
   }
 }
