@@ -1,14 +1,19 @@
 {
   "name": "graphql-passport",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Strategy and utilities to use passport.js with GraphQL server",
   "main": "lib/index.js",
   "scripts": {
-    "build": "npm run clean && babel src --out-dir lib --ignore src/**/*.test.js --ignore __mocks__",
+    "build": "tsc --noEmit --pretty && npm run clean && npm run build:types && npm run build:js",
+    "build:types": "tsc --emitDeclarationOnly",
+    "build:js": "babel src --extensions '.ts,.tsx' --source-maps --out-dir lib --ignore src/**/*.test.ts --ignore __mocks__",
     "clean": "rimraf lib",
-    "lint": "eslint src",
+    "lint": "tsc --noEmit && eslint \"src/**/*.{js,ts}\" --quiet --fix",
+    "check-types": "tsc",
+    "watch-ts": "tsc -w",
     "prepublish": "npm run lint && npm run test && npm run build",
-    "test": "jest src"
+    "test": "jest src",
+    "test:watch": "jest src --watch"
   },
   "repository": {
     "type": "git",
@@ -23,22 +28,39 @@
   "author": "Johannes Kettmann",
   "license": "MIT",
   "dependencies": {
-    "passport-strategy": "^1.0.0",
-    "util": "^0.12.1"
+    "passport-strategy": "^1.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.5",
     "@babel/plugin-transform-runtime": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
+    "@babel/preset-typescript": "^7.6.0",
     "@babel/runtime": "^7.5.5",
+    "@types/jest": "^24.0.21",
+    "@typescript-eslint/eslint-plugin": "^2.6.0",
     "babel-eslint": "^10.0.3",
-    "eslint": "^5.16.0",
-    "eslint-config-airbnb-base": "^13.2.0",
+    "eslint": "^6.1.0",
+    "eslint-config-airbnb-typescript": "^6.0.0",
     "eslint-plugin-import": "^2.18.2",
-    "jest": "^24.9.0"
+    "jest": "^24.9.0",
+    "passport": "^0.4.0",
+    "typescript": "^3.6.4"
+  },
+  "optionalDependencies": {
+    "@types/express": "^4.17.1",
+    "@types/passport": "^1.0.1",
+    "@types/passport-strategy": "^0.2.35",
+    "@types/ws": "^6.0.3",
+    "express": "^4.17.1",
+    "graphql": "^14.5.8",
+    "subscriptions-transport-ws": "^0.9.16",
+    "ws": "7.x"
   },
   "peerDependencies": {
-    "passport": "0.x"
+    "express": "4.x",
+    "passport": "0.x",
+    "subscriptions-transport-ws": "0.x",
+    "ws": "7.x || 6.x"
   }
 }
