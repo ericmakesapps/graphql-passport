@@ -96,11 +96,12 @@ const buildContext = <UserObjectType extends {}, R extends ExpressContext = Expr
     ...additionalContext
   } = contextParams;
 
-  const sharedContext = buildCommonContext<UserObjectType>(connection.context.req, additionalContext);
   if (connection) {
-    return sharedContext;
+    return buildCommonContext<UserObjectType>(connection.context.req, additionalContext);
   }
 
+  // The UserObject is without the any in conflict: "'User' is not assignable to type 'UserObjectType'"
+  const sharedContext = buildCommonContext<UserObjectType>(req as any, additionalContext);
   return {
     ...sharedContext,
     authenticate: (name: string, options: AuthenticateOptions) => promisifiedAuthentication(req, res, name, options),
