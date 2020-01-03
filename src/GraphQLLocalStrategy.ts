@@ -1,11 +1,11 @@
 /* eslint-disable no-param-reassign */
 import { Strategy as PassportStrategy } from 'passport-strategy';
-import { Request } from 'express';
-import { UserTemplate, PassportRequest, IVerifyOptions } from './types';
+import { Request as ExpressRequest } from 'express';
+import { PassportContext, IVerifyOptions } from './types';
 
 type VerifyFn = (username: unknown, password: unknown, done: () => void) => void;
-type VerifyFnWRequest = (
-  req: Request | PassportRequest,
+type VerifyFnWRequest = <U extends {}, Request extends object = ExpressRequest>(
+  req: Request | PassportContext<U, Request>,
   username: unknown,
   password: unknown,
   done: (error: any, user?: any, options?: IVerifyOptions) => void,
@@ -15,7 +15,7 @@ interface GraphQLLocalStrategyOptions {
   passReqToCallback?: boolean;
 }
 
-class GraphQLLocalStrategy extends PassportStrategy {
+class GraphQLLocalStrategy<U extends {}, Request extends ExpressRequest = ExpressRequest> extends PassportStrategy {
   constructor(
     options?: GraphQLLocalStrategyOptions | VerifyFn | VerifyFnWRequest,
     verify?: VerifyFn | VerifyFnWRequest,
@@ -45,7 +45,7 @@ class GraphQLLocalStrategy extends PassportStrategy {
   authenticate(req: Request, options: { username?: string; email?: string; password: string }) {
     const { username, email, password } = options;
 
-    const done = (err: Error, user: UserTemplate, info?: IVerifyOptions) => {
+    const done = (err: Error, user: U, info?: IVerifyOptions) => {
       if (err) {
         return this.error(err);
       }

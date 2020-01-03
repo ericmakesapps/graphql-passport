@@ -11,11 +11,7 @@ const promisifiedAuthentication = <UserObjectType extends {}>(
   options: AuthenticateOptions,
 ) => {
   const p = new Promise<AuthenticateReturn<UserObjectType>>((resolve, reject) => {
-    const done = (
-      err: Error | undefined,
-      user: UserObjectType | undefined,
-      info?: IVerifyOptions | undefined,
-    ) => {
+    const done = (err: Error | undefined, user: UserObjectType | undefined, info?: IVerifyOptions | undefined) => {
       if (err) reject(err);
       else resolve({ user, info });
     };
@@ -48,10 +44,7 @@ export interface Context<UserObjectType extends {}> {
   isAuthenticated: () => boolean;
   isUnauthenticated: () => boolean;
   getUser: () => UserObjectType;
-  authenticate: (
-    strategyName: string,
-    options?: object,
-  ) => Promise<AuthenticateReturn<UserObjectType>>;
+  authenticate: (strategyName: string, options?: object) => Promise<AuthenticateReturn<UserObjectType>>;
   login: (user: UserObjectType, options?: object) => Promise<void>;
   logout: () => void;
   user?: UserObjectType;
@@ -62,21 +55,21 @@ const buildCommonContext = <UserObjectType extends {}>(
   req: Pick<Context<UserObjectType>, 'isAuthenticated' | 'isUnauthenticated' | 'user'>,
   additionalContext: {},
 ) => ({
-    isAuthenticated: () => req.isAuthenticated(),
-    isUnauthenticated: () => req.isUnauthenticated(),
-    getUser: () => req.user,
-    authenticate: (strategyName: string) => {
-      throw new Error(`Authenticate (${strategyName}) not implemented for subscriptions`);
-    },
-    login: () => {
-      throw new Error('Not implemented for subscriptions');
-    },
-    logout: () => {
-      throw new Error('Not implemented for subscriptions');
-    },
-    req,
-    ...additionalContext,
-  });
+  isAuthenticated: () => req.isAuthenticated(),
+  isUnauthenticated: () => req.isUnauthenticated(),
+  getUser: () => req.user,
+  authenticate: (strategyName: string) => {
+    throw new Error(`Authenticate (${strategyName}) not implemented for subscriptions`);
+  },
+  login: () => {
+    throw new Error('Not implemented for subscriptions');
+  },
+  logout: () => {
+    throw new Error('Not implemented for subscriptions');
+  },
+  req,
+  ...additionalContext,
+});
 
 export interface ExpressContext {
   req: express.Request;
@@ -87,7 +80,9 @@ export interface ExpressContext {
 
 // function buildContext(contextParams: RegularContextParams): Context;
 // function buildContext(contextParams: SubscriptionContextParams): SubscriptionContext;
-const buildContext = <UserObjectType extends {}, R extends ExpressContext = ExpressContext>(contextParams: R): Context<UserObjectType> => {
+const buildContext = <UserObjectType extends {}, R extends ExpressContext = ExpressContext>(
+  contextParams: R,
+): Context<UserObjectType> => {
   const {
     req, // set for queries and mutations
     res, // set for queries and mutations
