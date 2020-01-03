@@ -3,7 +3,7 @@
 Inside your resolvers you can get access to the following functions and attributes inside the context.
 
 ```js
-context.authenticate("graphql-local", { email, password }); // not available for subscriptions
+context.authenticate('graphql-local', { email, password }); // not available for subscriptions
 context.login(user); // not available for subscriptions
 context.logout(); // not available for subscriptions
 context.isAuthenticated();
@@ -20,22 +20,20 @@ For a full working example including detailed instructions visit this blog post 
 Initialize the `GraphQLLocalStrategy` and create the GraphQL context by using `buildContext`.
 
 ```js
-import express from "express";
-import session from "express-session";
-import { ApolloServer } from "apollo-server-express";
-import passport from "passport";
-import { GraphQLLocalStrategy, buildContext } from "graphql-passport";
+import express from 'express';
+import session from 'express-session';
+import { ApolloServer } from 'apollo-server-express';
+import passport from 'passport';
+import { GraphQLLocalStrategy, buildContext } from 'graphql-passport';
 
 passport.use(
   new GraphQLLocalStrategy((email, password, done) => {
     // Adjust this callback to your needs
     const users = User.getUsers();
-    const matchingUser = users.find(
-      user => email === user.email && password === user.password
-    );
-    const error = matchingUser ? null : new Error("no matching user");
+    const matchingUser = users.find(user => email === user.email && password === user.password);
+    const error = matchingUser ? null : new Error('no matching user');
     done(error, matchingUser);
-  })
+  }),
 );
 
 const app = express();
@@ -46,15 +44,13 @@ app.use(passport.session()); // if session is used
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: ({ req, res }) => buildContext({ req, res, User })
+  context: ({ req, res }) => buildContext({ req, res, User }),
 });
 
 server.applyMiddleware({ app, cors: false });
 
 app.listen({ port: PORT }, () => {
-  console.log(
-    `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`
-  );
+  console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);
 });
 ```
 
@@ -75,22 +71,22 @@ Inside your resolvers you can call `context.authenticate` to authenticate the us
 ```js
 const resolvers = {
   Query: {
-    currentUser: (parent, args, context) => context.getUser()
+    currentUser: (parent, args, context) => context.getUser(),
   },
   Mutation: {
     login: async (parent, { email, password }, context) => {
       // instead of email you can pass username as well
-      const { user, info } = await context.authenticate("graphql-local", {
+      const { user, info } = await context.authenticate('graphql-local', {
         email,
-        password
+        password,
       });
 
       // only required if express-session is used
       context.login(user);
 
       return { user };
-    }
-  }
+    },
+  },
 };
 ```
 
@@ -162,14 +158,22 @@ const resolvers = {
 
 # Typescript
 
-As the library cannot know the structure of your user object you need to add this to the global scope by writing your own "somename.d.ts" you can adapt the following template with whatever user variables that you want have added to the PassportRequest:
+As the library cannot know the structure of your user object you need to add this to the global scope by writing your own "somename.d.ts" you can add how your context definition should look like:
 
 ```ts
-declare module "graphql-passport" {
-  interface PassportRequest {
-    user?: {
-      username: string;
-    };
+import { Request as ExpressRequest } from 'express';
+import { PassportSubscriptionContext, PassportContext } from 'graphql-passport';
+import { MyUserObject } = 'some_user_file';
+
+export interface MyContext extends PassportContext<MyUserObject, ExpressRequest>{
+  dataSources: {
+    myOtherAPI: { ... }
+  }
+}
+
+export interface MySubscriptionContext extends PassportSubscriptionContext<MyUserObject, ExpressRequest>{
+  dataSources: {
+    myOtherAPI: { ... }
   }
 }
 ```
@@ -177,12 +181,14 @@ declare module "graphql-passport" {
 In your GraphQL functions you can the reference the passport context using:
 
 ```ts
+import { MyContext } from 'somename';
+
 const something = async (
   parent: unknown,
   data: SomeData,
-  context: PassportRequest
+  context: MyContext
 ) => {
-  const username = context.user?.name || "guest";
+  const username = context.getUser()?.name || "guest";
 
   logger.info(`${username} is accessing 'something'`);
   ...
