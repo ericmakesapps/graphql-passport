@@ -9,6 +9,7 @@ export interface AuthInfoTemplate {}
 export type PassportContext<U extends {}, Request extends object> = Request & {
   authInfo?: AuthInfoTemplate;
   user?: U;
+  getUser(): U | undefined;
 
   login(user: U, done: (err: any) => void): void;
   login(user: U, options: any, done: (err: any) => void): void;
@@ -33,6 +34,7 @@ export type PassportSubscriptionContext<
 > = SubscriptionRequest & {
   authInfo?: AuthInfoTemplate;
   user?: U;
+  getUser(): U | undefined;
 
   login(user: U, done: (err: any) => void): void;
   login(user: U, options: any, done: (err: any) => void): void;
