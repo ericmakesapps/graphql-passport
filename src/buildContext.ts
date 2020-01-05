@@ -1,15 +1,12 @@
 /* eslint-disable max-len */
-import passport, { AuthenticateOptions } from 'passport';
+import originalPassport, { AuthenticateOptions } from 'passport';
 import express from 'express';
 import { ExecutionParams } from 'subscriptions-transport-ws';
 import { AuthenticateReturn, IVerifyOptions } from './types';
 
-const promisifiedAuthentication = <UserObjectType extends {}>(
-  req: express.Request,
-  res: express.Response,
-  name: string,
-  options: AuthenticateOptions,
-) => {
+const buildPromisifiedAuthentication = <UserObjectType extends {}>(
+  passport: { authenticate: Function } = originalPassport,
+) => (req: express.Request, res: express.Response, name: string, options: AuthenticateOptions) => {
   const p = new Promise<AuthenticateReturn<UserObjectType>>((resolve, reject) => {
     const done = (err: Error | undefined, user: UserObjectType | undefined, info?: IVerifyOptions | undefined) => {
       if (err) reject(err);
@@ -82,6 +79,7 @@ export interface ExpressContext {
 // function buildContext(contextParams: SubscriptionContextParams): SubscriptionContext;
 const buildContext = <UserObjectType extends {}, R extends ExpressContext = ExpressContext>(
   contextParams: R,
+  passport: { authenticate: Function } = originalPassport,
 ): Context<UserObjectType> => {
   const {
     req, // set for queries and mutations
@@ -97,6 +95,7 @@ const buildContext = <UserObjectType extends {}, R extends ExpressContext = Expr
 
   // The UserObject is without the any in conflict: "'User' is not assignable to type 'UserObjectType'"
   const sharedContext = buildCommonContext<UserObjectType>(req as any, additionalContext);
+  const promisifiedAuthentication = buildPromisifiedAuthentication<UserObjectType>(passport);
   return {
     ...sharedContext,
     authenticate: (name: string, options: AuthenticateOptions) => promisifiedAuthentication(req, res, name, options),

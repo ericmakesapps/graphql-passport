@@ -1,24 +1,22 @@
-import passport from 'passport';
+import passportMock from './mocks/passportMock';
 import buildContext, { ExpressContext } from '../buildContext';
 
-describe.skip('context.authenticate', () => {
+describe('context.authenticate', () => {
   test('calls passport authenticate', async () => {
     const req = { req: true } as any;
     const res = { res: true } as any;
     const params = { req, res } as ExpressContext;
-    const context = await buildContext(params);
+    const context = buildContext(params, passportMock);
 
     const options = { options: true };
     await context.authenticate('strategy-name', options);
 
-    // @ts-ignore
-    expect(passport.authenticateMiddleware).toHaveBeenCalledWith(req, res);
-    // @ts-ignore
-    expect(passport.authenticate).toHaveBeenCalledWith('strategy-name', options, expect.any(Function));
+    expect(passportMock.authenticateMiddleware).toHaveBeenCalledWith(req, res);
+    expect(passportMock.authenticate).toHaveBeenCalledWith('strategy-name', options, expect.any(Function));
   });
 
   test('resolves with user and info data', async () => {
-    const context = buildContext({ req: {}, res: {} } as ExpressContext);
+    const context = buildContext({ req: {}, res: {} } as ExpressContext, passportMock);
     const { user, info } = await context.authenticate('strategy-name');
     expect(user).toEqual({ id: 'user-id' });
     expect(info).toEqual({ info: true });
@@ -26,9 +24,8 @@ describe.skip('context.authenticate', () => {
 
   test('rejects when passport returns error', async () => {
     const expectedError = new Error('authentication failed');
-    // @ts-ignore
-    passport.authenticate.mockImplementationOnce((name, options, done) => done(expectedError));
-    const context = buildContext({ req: {}, res: {} } as ExpressContext);
+    passportMock.authenticate.mockImplementationOnce((name, options, done) => done(expectedError));
+    const context = buildContext({ req: {}, res: {} } as ExpressContext, passportMock);
     let actualError: Error;
 
     try {
