@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import GraphQLLocalStrategy from './GraphQLLocalStrategy';
+import GraphQLLocalStrategy from '../GraphQLLocalStrategy';
 
 describe('GraphQLLocalStrategy test', () => {
   test('authenticate calls verify with username as default', () => {

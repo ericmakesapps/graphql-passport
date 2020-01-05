@@ -15,6 +15,6 @@
     },
     "typeRoots": ["node_modules/@types", "src/@types"]
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "mocks"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

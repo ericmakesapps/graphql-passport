@@ -1,5 +1,5 @@
-import createSubscriptionOnConnect from './createSubscriptionOnConnect';
-import { WebSocket } from './types';
+import createSubscriptionOnConnect from '../createSubscriptionOnConnect';
+import { WebSocket } from '../types';
 
 describe('createSubscriptionOnConnect', () => {
   test('calls all provided middlewares and copies websocket request to context', async () => {
