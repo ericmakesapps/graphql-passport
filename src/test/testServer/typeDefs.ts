@@ -2,14 +2,22 @@ import { gql } from 'apollo-server';
 
 const typeDefs = gql`
   type Query {
-    launch(id: ID!): Launch
+    # User has to be authenticated to get access to these
+    launch: LaunchQueries
     # Queries for the current user
     me: User
+    # Just a plain server version query without any access restrictions
+    version: String!
   }
 
   type Mutation {
     login(name: String!, password: String!): Boolean # login token
+    # User has to be of admin type fo have access to these
     launch: LaunchMutations
+  }
+
+  type LaunchQueries {
+    find(id: ID!): Launch
   }
 
   type Launch {
@@ -18,7 +26,7 @@ const typeDefs = gql`
   }
 
   type LaunchMutations {
-    add(name: String!): ID
+    add(name: String!): Launch
   }
 
   type User {
