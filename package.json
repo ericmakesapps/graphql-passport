@@ -4,9 +4,10 @@
   "description": "Strategy and utilities to use passport.js with GraphQL server",
   "main": "lib/index.js",
   "scripts": {
-    "build": "tsc --noEmit --pretty && npm run clean && npm run build:types && npm run build:js",
+    "build": "tsc --noEmit --pretty && npm run clean && npm run build:types && npm run build:js && npm run build:post",
     "build:types": "tsc --emitDeclarationOnly",
-    "build:js": "babel src --extensions '.ts,.tsx' --source-maps --out-dir lib --ignore src/**/*.test.ts --ignore __mocks__",
+    "build:js": "babel src --extensions '.ts,.tsx' --source-maps --out-dir lib --ignore 'src/test'",
+    "build:post": "rimraf lib/test",
     "clean": "rimraf lib",
     "lint": "tsc --noEmit && eslint \"src/**/*.{js,ts}\" --quiet --fix",
     "check-types": "tsc",
