@@ -198,3 +198,25 @@ const something = async (
   ...
 };
 ```
+
+# Testing
+
+For a full Apollo server example using [supertest](https://www.npmjs.com/package/supertest) you can find the implemeation under `src/test/testServer`. There is also the ['apollo-server-testing'](https://github.com/apollographql/apollo-server/tree/master/packages/apollo-server-testing) that allows you to setup a testing server where you can provide your own context mocks:
+
+```ts
+const myTestServer = new ApolloServer({
+  typeDefs,
+  // FakeContext
+  context: () => ({
+    getUser: () => undefined,
+    isAuthenticated: () => false,
+    authenticate: () => ({ id: 'mock-user', name: 'John Doe' }),
+  }),
+  resolvers,
+});
+
+const client = createTestClient(myTestServer);
+const res = await client.query({ query });
+```
+
+If you use the `dataSource` API option you have a powerful approach to testing your endpoints without the overweight introduced using the `supertest` approach.
