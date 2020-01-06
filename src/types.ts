@@ -6,15 +6,17 @@ import { ConnectionContext } from 'subscriptions-transport-ws';
 // tslint:disable-next-line:no-empty-interface
 export interface AuthInfoTemplate {}
 
-export type PassportContext<U extends {}, Request extends object> = Request & {
+type SharedPassportContext<
+  UserObjectType extends {},
+  Credentials extends {},
+  AuthInfoTemplate extends {},
+  Request extends object
+> = {
   authInfo?: AuthInfoTemplate;
-  user?: U;
-  getUser(): U | undefined;
+  user?: UserObjectType;
+  getUser(): UserObjectType | undefined;
 
-  login(user: U, done: (err: any) => void): void;
-  login(user: U, options: any, done: (err: any) => void): void;
-  logIn(user: U, done: (err: any) => void): void;
-  logIn(user: U, options: any, done: (err: any) => void): void;
+  login(user: Credentials, options?: any): Promise<void>;
 
   logout(): void;
   logOut(): void;
@@ -22,36 +24,24 @@ export type PassportContext<U extends {}, Request extends object> = Request & {
   isAuthenticated(): boolean;
   isUnauthenticated(): boolean;
 
-  authenticate(
-    type: string,
-    credentials: { username: string; password: string } | { email: string; password: string },
-  ): Promise<{ user: U }>;
+  authenticate(type: string, credentials: Credentials): Promise<{ user: UserObjectType }>;
+
+  req: Request;
 };
+
+export type PassportContext<
+  UserObjectType extends {},
+  Credentials extends {},
+  AuthInfoTemplate extends {} = {},
+  Request extends object = ExpressRequest
+> = SharedPassportContext<UserObjectType, Credentials, AuthInfoTemplate, Request>;
 
 export type PassportSubscriptionContext<
-  U extends {},
+  UserObjectType extends {},
+  Credentials extends {},
+  AuthInfoTemplate extends {} = {},
   SubscriptionRequest extends object = ConnectionContext
-> = SubscriptionRequest & {
-  authInfo?: AuthInfoTemplate;
-  user?: U;
-  getUser(): U | undefined;
-
-  login(user: U, done: (err: any) => void): void;
-  login(user: U, options: any, done: (err: any) => void): void;
-  logIn(user: U, done: (err: any) => void): void;
-  logIn(user: U, options: any, done: (err: any) => void): void;
-
-  logout(): void;
-  logOut(): void;
-
-  isAuthenticated(): boolean;
-  isUnauthenticated(): boolean;
-
-  authenticate(
-    type: string,
-    credentials: { username: string; password: string } | { email: string; password: string },
-  ): Promise<{ user: U }>;
-};
+> = SharedPassportContext<UserObjectType, Credentials, AuthInfoTemplate, SubscriptionRequest>;
 
 export interface IVerifyOptions {
   info: boolean;
