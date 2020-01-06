@@ -26,9 +26,9 @@ const promisifiedAuthentication = <UserObjectType extends {}>(
 const promisifiedLogin = <UserObjectType extends {}>(
   req: express.Request,
   user: UserObjectType,
-  options: AuthenticateOptions,
-) => {
-  const p = new Promise<void>((resolve, reject) => {
+  options?: AuthenticateOptions,
+) =>
+  new Promise<void>((resolve, reject) => {
     const done = (err: Error | undefined) => {
       if (err) reject(err);
       else resolve();
@@ -36,9 +36,6 @@ const promisifiedLogin = <UserObjectType extends {}>(
 
     req.login(user, options, done);
   });
-
-  return p;
-};
 
 export interface Context<UserObjectType extends {}> {
   isAuthenticated: () => boolean;
