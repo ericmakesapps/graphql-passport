@@ -5,15 +5,17 @@ import { ConnectionContext } from 'subscriptions-transport-ws';
 
 type DoneLoggingIn<UserObjectType extends {}> = (err: any, user: UserObjectType) => void;
 
-type SharedPassportContext<UserObjectType extends {}, Credentials extends {}, AuthInfoTemplate extends {}> = {
+type SharedPassportContext<
+  UserObjectType extends {},
+  Credentials extends {},
+  AuthInfoTemplate extends {},
+  Request extends object
+> = {
   authInfo?: AuthInfoTemplate;
   user?: UserObjectType;
   getUser(): UserObjectType | undefined;
 
-  login(user: Credentials, done: DoneLoggingIn<UserObjectType>): void;
-  login(user: Credentials, options: any, done: DoneLoggingIn<UserObjectType>): void;
-  logIn(user: Credentials, done: DoneLoggingIn<UserObjectType>): void;
-  logIn(user: Credentials, options: any, done: DoneLoggingIn<UserObjectType>): void;
+  login(user: Credentials, options?: any): Promise<void>;
 
   logout(): void;
   logOut(): void;
@@ -22,6 +24,8 @@ type SharedPassportContext<UserObjectType extends {}, Credentials extends {}, Au
   isUnauthenticated(): boolean;
 
   authenticate(type: string, credentials: Credentials): Promise<{ user: UserObjectType }>;
+
+  req: Request;
 };
 
 export type PassportContext<
@@ -29,14 +33,14 @@ export type PassportContext<
   Credentials extends {},
   AuthInfoTemplate extends {} = {},
   Request extends object = ExpressRequest
-> = Request & SharedPassportContext<UserObjectType, Credentials, AuthInfoTemplate>;
+> = SharedPassportContext<UserObjectType, Credentials, AuthInfoTemplate, Request>;
 
 export type PassportSubscriptionContext<
   UserObjectType extends {},
   Credentials extends {},
   AuthInfoTemplate extends {} = {},
   SubscriptionRequest extends object = ConnectionContext
-> = SubscriptionRequest & SharedPassportContext<UserObjectType, Credentials, AuthInfoTemplate>;
+> = SharedPassportContext<UserObjectType, Credentials, AuthInfoTemplate, SubscriptionRequest>;
 
 export interface IVerifyOptions {
   info: boolean;
