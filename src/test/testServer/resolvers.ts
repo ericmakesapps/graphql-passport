@@ -27,8 +27,16 @@ const resolvers = {
       { authenticate, login }: MyContext,
     ) {
       const { user } = await authenticate('graphql-local', { username: name, password });
-      await new Promise(resolve => login(user, () => resolve()));
+      await login(user);
       return !!user;
+    },
+    async logout(_: unknown, __: unknown, { logout }: MyContext) {
+      try {
+        logout();
+      } catch {
+        return false;
+      }
+      return true;
     },
     launch(_: unknown, __: unknown, { isAuthenticated, getUser }: MyContext) {
       const user = getUser();

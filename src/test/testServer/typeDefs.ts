@@ -11,7 +11,10 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    login(name: String!, password: String!): Boolean # login token
+    # Login user
+    login(name: String!, password: String!): Boolean
+    # Logout current user
+    logout: Boolean
     # User has to be of admin type fo have access to these
     launch: LaunchMutations
   }

@@ -8,6 +8,11 @@ describe('Test fullscale server implementation', () => {
     login(name: $name, password: $password)
   }`;
 
+  const logoutQuery = `
+  mutation logout {
+    logout
+  }`;
+
   const meQuery = `
   {
     me {
@@ -32,7 +37,7 @@ describe('Test fullscale server implementation', () => {
     expect(ret).toHaveProperty('data.version', '1.0');
   });
 
-  test('Retrieve self after logging in', async () => {
+  test('Retrieve self after logging in up until logout', async () => {
     const variables = {
       name: 'regular',
       password: 'bad password',
@@ -61,6 +66,17 @@ describe('Test fullscale server implementation', () => {
 
     expect(ret).not.toHaveProperty('errors');
     expect(ret).toHaveProperty('data.me.name', 'regular');
+
+    ret = await serverAgent
+      .post('/graphql')
+      .send({ query: logoutQuery })
+      .then(({ text }: { text: string }) => JSON.parse(text));
+    expect(ret).not.toHaveProperty('errors');
+
+    ret = await serverAgent.get(urlString({ query: meQuery })).then(({ text }: { text: string }) => JSON.parse(text));
+
+    expect(ret).not.toHaveProperty('errors');
+    expect(ret).toHaveProperty('data.me', null);
   });
 
   test('Authentication at a upper level should prevent access to subelements', async () => {
