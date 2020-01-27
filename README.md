@@ -162,25 +162,54 @@ const resolvers = {
 
 # Typescript
 
-As the library cannot know the structure of your user object you need to write your own "ProjectContext.d.ts" with the context:
+This library cannot know what fields the user type contains in a given project. In order to define your own `Context` you must provide your user type to the `PassportContext`/`PassportSubscriptionContext` generic parameter.
+
+## Creating a simple context
+
+First, we need to define the user type. In this example the type is defined in a file called `MyUser.ts` and has the fields firstName and lastName.
+
+```ts
+export type MyUser {
+  firstName: string;
+  lastName: string;
+}
+```
+
+We can now define the project specific context interface using the above user type in place of the generic for the `PassportContext` and `PassportSubscriptionContext` interfaces. For this example we create a file named `MyContext.ts` with following content.
 
 ```ts
 import { Request as ExpressRequest } from 'express';
 import { PassportSubscriptionContext, PassportContext } from 'graphql-passport';
-import { ProjectUserObject } = 'some_user_file';
+import { MyUser } = 'MyUser';
 
-export interface ProjectContext extends PassportContext<ProjectUserObject, ExpressRequest>{
+export interface ProjectContext extends PassportContext<MyUser, ExpressRequest>{}
+
+export interface ProjectSubscriptionContext extends PassportSubscriptionContext<MyUser, ExpressRequest>{}
+```
+
+## Working with data sources
+
+If you use [Apollo's data sources](https://www.apollographql.com/docs/apollo-server/data/data-sources/) you might want add `dataSources` to the interface. This can be achieved as follows.
+
+```ts
+import { Request as ExpressRequest } from 'express';
+import { PassportSubscriptionContext, PassportContext } from 'graphql-passport';
+import { MyUser } = 'MyUser';
+
+export interface ProjectContext extends PassportContext<MyUser, ExpressRequest>{
   dataSources: {
     myOtherAPI: { ... }
   }
 }
 
-export interface ProjectSubscriptionContext extends PassportSubscriptionContext<ProjectUserObject, ExpressRequest>{
+export interface ProjectSubscriptionContext extends PassportSubscriptionContext<MyUser, ExpressRequest>{
   dataSources: {
     myOtherAPI: { ... }
   }
 }
 ```
+
+## In the resolver
 
 In your GraphQL resolver you can the reference the passport context using:
 
