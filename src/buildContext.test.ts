@@ -1,11 +1,11 @@
 import passport from 'passport';
-import buildContext, { ExpressContext } from './buildContext';
+import buildContext, { ContextParams } from './buildContext';
 
 describe('context.authenticate', () => {
   test('calls passport authenticate', async () => {
     const req = { req: true } as any;
     const res = { res: true } as any;
-    const params = { req, res } as ExpressContext;
+    const params = { req, res } as ContextParams;
     const context = await buildContext(params);
 
     const options = { options: true };
@@ -17,7 +17,7 @@ describe('context.authenticate', () => {
   });
 
   test('resolves with user and info data', async () => {
-    const context = buildContext({ req: {}, res: {} } as ExpressContext);
+    const context = buildContext({ req: {}, res: {} } as ContextParams);
     const { user, info } = await context.authenticate('strategy-name');
     expect(user).toEqual({ id: 'user-id' });
     expect(info).toEqual({ info: true });
@@ -27,7 +27,7 @@ describe('context.authenticate', () => {
     const expectedError = new Error('authentication failed');
     // @ts-ignore
     passport.authenticate.mockImplementationOnce((name, options, done) => done(expectedError));
-    const context = buildContext({ req: {}, res: {} } as ExpressContext);
+    const context = buildContext({ req: {}, res: {} } as ContextParams);
     let actualError: Error;
 
     try {
@@ -44,7 +44,7 @@ describe('context.login', () => {
   test('calls req.login', async () => {
     const req = { login: jest.fn((user, options, callback) => callback(null)) } as any;
     const res = { res: true };
-    const context = buildContext(({ req, res } as any) as ExpressContext);
+    const context = buildContext(({ req, res } as any) as ContextParams);
 
     const options = { options: true };
     const user = { email: 'max@mustermann.com', password: 'qwerty' };
@@ -56,7 +56,7 @@ describe('context.login', () => {
   test('context.login rejects when passport returns error', async () => {
     const expectedError = new Error('authentication failed');
     const req = { login: jest.fn((user, options, callback) => callback(expectedError)) };
-    const context = buildContext(({ req, res: {} } as any) as ExpressContext);
+    const context = buildContext(({ req, res: {} } as any) as ContextParams);
     let actualError: Error;
 
     try {
@@ -75,7 +75,7 @@ describe('context.login', () => {
       logout: () => {},
       isAuthenticated: () => {},
       isUnauthenticated: () => {},
-    } as ExpressContext['req'];
+    } as ContextParams['req'];
     const context = buildContext({ req, res: {} as any });
     expect(context).toEqual(
       expect.objectContaining({

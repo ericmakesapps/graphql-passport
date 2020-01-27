@@ -44,14 +44,15 @@ export interface Context<UserObjectType extends {}> {
   authenticate: (strategyName: string, options?: object) => Promise<AuthenticateReturn<UserObjectType>>;
   login: (user: UserObjectType, options?: object) => Promise<void>;
   logout: () => void;
-  user?: UserObjectType;
   res?: express.Response;
 }
 
-const buildCommonContext = <UserObjectType extends {}>(
-  req: Pick<Context<UserObjectType>, 'isAuthenticated' | 'isUnauthenticated' | 'user'>,
-  additionalContext: {},
-) => ({
+interface CommonRequest<UserObjectType extends {}>
+  extends Pick<Context<UserObjectType>, 'isAuthenticated' | 'isUnauthenticated'> {
+  user?: UserObjectType;
+}
+
+const buildCommonContext = <UserObjectType extends {}>(req: CommonRequest<UserObjectType>, additionalContext: {}) => ({
   isAuthenticated: () => req.isAuthenticated(),
   isUnauthenticated: () => req.isUnauthenticated(),
   getUser: () => req.user,
@@ -68,7 +69,7 @@ const buildCommonContext = <UserObjectType extends {}>(
   ...additionalContext,
 });
 
-export interface ExpressContext {
+export interface ContextParams {
   req: express.Request;
   res: express.Response;
   connection?: ExecutionParams;
@@ -77,7 +78,7 @@ export interface ExpressContext {
 
 // function buildContext(contextParams: RegularContextParams): Context;
 // function buildContext(contextParams: SubscriptionContextParams): SubscriptionContext;
-const buildContext = <UserObjectType extends {}, R extends ExpressContext = ExpressContext>(
+const buildContext = <UserObjectType extends {}, R extends ContextParams = ContextParams>(
   contextParams: R,
 ): Context<UserObjectType> => {
   const {
