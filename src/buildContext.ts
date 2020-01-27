@@ -37,6 +37,11 @@ const promisifiedLogin = <UserObjectType extends {}>(
     req.login(user, options, done);
   });
 
+interface CommonRequest<UserObjectType extends {}>
+  extends Pick<Context<UserObjectType>, 'isAuthenticated' | 'isUnauthenticated'> {
+  user?: UserObjectType;
+}
+
 export interface Context<UserObjectType extends {}> {
   isAuthenticated: () => boolean;
   isUnauthenticated: () => boolean;
@@ -45,11 +50,7 @@ export interface Context<UserObjectType extends {}> {
   login: (user: UserObjectType, options?: object) => Promise<void>;
   logout: () => void;
   res?: express.Response;
-}
-
-interface CommonRequest<UserObjectType extends {}>
-  extends Pick<Context<UserObjectType>, 'isAuthenticated' | 'isUnauthenticated'> {
-  user?: UserObjectType;
+  req: CommonRequest<UserObjectType>;
 }
 
 const buildCommonContext = <UserObjectType extends {}>(req: CommonRequest<UserObjectType>, additionalContext: {}) => ({
