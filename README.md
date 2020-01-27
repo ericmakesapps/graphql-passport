@@ -162,40 +162,35 @@ const resolvers = {
 
 # Typescript
 
-As the library cannot know the structure of your user object you need to add this to the global scope by writing your own "somename.d.ts" you can add how your context definition should look like:
+As the library cannot know the structure of your user object you need to write your own "ProjectContext.d.ts" with the context:
 
 ```ts
 import { Request as ExpressRequest } from 'express';
 import { PassportSubscriptionContext, PassportContext } from 'graphql-passport';
-import { MyUserObject } = 'some_user_file';
+import { ProjectUserObject } = 'some_user_file';
 
-export interface MyContext extends PassportContext<MyUserObject, ExpressRequest>{
+export interface ProjectContext extends PassportContext<ProjectUserObject, ExpressRequest>{
   dataSources: {
     myOtherAPI: { ... }
   }
 }
 
-export interface MySubscriptionContext extends PassportSubscriptionContext<MyUserObject, ExpressRequest>{
+export interface ProjectSubscriptionContext extends PassportSubscriptionContext<ProjectUserObject, ExpressRequest>{
   dataSources: {
     myOtherAPI: { ... }
   }
 }
 ```
 
-In your GraphQL functions you can the reference the passport context using:
+In your GraphQL resolver you can the reference the passport context using:
 
 ```ts
-import { MyContext } from 'somename';
+import { ProjectContext } from 'ProjectContext';
 
-const something = async (
-  parent: unknown,
-  data: SomeData,
-  context: MyContext
-) => {
-  const username = context.getUser()?.name || "guest";
+const username = async (parent: unknown, data: SomeData, context: ProjectContext) => {
+  const username = context.getUser()?.name || 'guest';
 
-  logger.info(`${username} is accessing 'something'`);
-  ...
+  return username;
 };
 ```
 
