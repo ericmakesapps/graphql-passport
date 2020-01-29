@@ -1,21 +1,22 @@
 import ws from 'ws';
-import express from 'express';
+import { Request as ExpressRequest } from 'express';
 import { IncomingMessage } from 'http';
+import { ConnectionContext } from 'subscriptions-transport-ws';
 
 // tslint:disable-next-line:no-empty-interface
 export interface AuthInfoTemplate {}
-// tslint:disable-next-line:no-empty-interface
-export interface UserTemplate {}
 
-export interface PassportRequest extends express.Request {
+type SharedPassportContext<
+  UserObjectType extends {},
+  Credentials extends {},
+  AuthInfoTemplate extends {},
+  Request extends object
+> = {
   authInfo?: AuthInfoTemplate;
-  user?: UserTemplate;
+  user?: UserObjectType;
+  getUser(): UserObjectType | undefined;
 
-  // These declarations are merged into express's Request type
-  login(user: UserTemplate, done: (err: any) => void): void;
-  login(user: UserTemplate, options: any, done: (err: any) => void): void;
-  logIn(user: UserTemplate, done: (err: any) => void): void;
-  logIn(user: UserTemplate, options: any, done: (err: any) => void): void;
+  login(user: Credentials, options?: any): Promise<void>;
 
   logout(): void;
   logOut(): void;
@@ -23,22 +24,35 @@ export interface PassportRequest extends express.Request {
   isAuthenticated(): boolean;
   isUnauthenticated(): boolean;
 
-  authenticate(
-    type: string,
-    credentials: { username: string; password: string } | { email: string; password: string },
-  ): Promise<{ user: UserTemplate }>;
-}
+  authenticate(type: string, credentials: Credentials): Promise<{ user: UserObjectType }>;
+
+  req: Request;
+};
+
+export type PassportContext<
+  UserObjectType extends {},
+  Credentials extends {},
+  AuthInfoTemplate extends {} = {},
+  Request extends object = ExpressRequest
+> = SharedPassportContext<UserObjectType, Credentials, AuthInfoTemplate, Request>;
+
+export type PassportSubscriptionContext<
+  UserObjectType extends {},
+  Credentials extends {},
+  AuthInfoTemplate extends {} = {},
+  SubscriptionRequest extends object = ConnectionContext
+> = SharedPassportContext<UserObjectType, Credentials, AuthInfoTemplate, SubscriptionRequest>;
 
 export interface IVerifyOptions {
   info: boolean;
   message?: string;
 }
 
-export interface AuthenticateReturn {
-  user: UserTemplate | undefined;
+export interface AuthenticateReturn<UserObjectType extends {}> {
+  user: UserObjectType | undefined;
   info: IVerifyOptions | undefined;
 }
 
-export interface WebSocket extends ws {
-  upgradeReq: IncomingMessage & PassportRequest;
+export interface WebSocket<Request extends {} = ExpressRequest> extends ws {
+  upgradeReq: IncomingMessage & Request;
 }

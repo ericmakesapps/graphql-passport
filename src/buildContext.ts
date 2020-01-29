@@ -2,20 +2,16 @@
 import passport, { AuthenticateOptions } from 'passport';
 import express from 'express';
 import { ExecutionParams } from 'subscriptions-transport-ws';
-import { UserTemplate, AuthenticateReturn, IVerifyOptions } from './types';
+import { AuthenticateReturn, IVerifyOptions } from './types';
 
-const promisifiedAuthentication = (
+const promisifiedAuthentication = <UserObjectType extends {}>(
   req: express.Request,
   res: express.Response,
   name: string,
   options: AuthenticateOptions,
 ) => {
-  const p = new Promise<AuthenticateReturn>((resolve, reject) => {
-    const done = (
-      err: Error | undefined,
-      user: UserTemplate | undefined,
-      info?: IVerifyOptions | undefined,
-    ) => {
+  const p = new Promise<AuthenticateReturn<UserObjectType>>((resolve, reject) => {
+    const done = (err: Error | undefined, user: UserObjectType | undefined, info?: IVerifyOptions | undefined) => {
       if (err) reject(err);
       else resolve({ user, info });
     };
@@ -27,12 +23,12 @@ const promisifiedAuthentication = (
   return p;
 };
 
-const promisifiedLogin = (
+const promisifiedLogin = <UserObjectType extends {}>(
   req: express.Request,
-  user: UserTemplate,
-  options: AuthenticateOptions,
-) => {
-  const p = new Promise<void>((resolve, reject) => {
+  user: UserObjectType,
+  options?: AuthenticateOptions,
+) =>
+  new Promise<void>((resolve, reject) => {
     const done = (err: Error | undefined) => {
       if (err) reject(err);
       else resolve();
@@ -41,21 +37,23 @@ const promisifiedLogin = (
     req.login(user, options, done);
   });
 
-  return p;
-};
-
-export interface Context {
-  isAuthenticated: () => boolean;
-  isUnauthenticated: () => boolean;
-  getUser: () => UserTemplate;
-  authenticate: (strategyName: string, options?: object) => Promise<AuthenticateReturn>;
-  login: (user: UserTemplate, options?: object) => Promise<void>;
-  logout: () => void;
-  req: express.Request;
-  res?: express.Response;
+interface CommonRequest<UserObjectType extends {}>
+  extends Pick<Context<UserObjectType>, 'isAuthenticated' | 'isUnauthenticated'> {
+  user?: UserObjectType;
 }
 
-const buildCommonContext = (req: express.Request, additionalContext: {}): Context => ({
+export interface Context<UserObjectType extends {}> {
+  isAuthenticated: () => boolean;
+  isUnauthenticated: () => boolean;
+  getUser: () => UserObjectType;
+  authenticate: (strategyName: string, options?: object) => Promise<AuthenticateReturn<UserObjectType>>;
+  login: (user: UserObjectType, options?: object) => Promise<void>;
+  logout: () => void;
+  res?: express.Response;
+  req: CommonRequest<UserObjectType>;
+}
+
+const buildCommonContext = <UserObjectType extends {}>(req: CommonRequest<UserObjectType>, additionalContext: {}) => ({
   isAuthenticated: () => req.isAuthenticated(),
   isUnauthenticated: () => req.isUnauthenticated(),
   getUser: () => req.user,
@@ -72,21 +70,7 @@ const buildCommonContext = (req: express.Request, additionalContext: {}): Contex
   ...additionalContext,
 });
 
-export interface RegularContextParams {
-  req: express.Request;
-  res: express.Response;
-  payload?: unknown;
-  connection?: undefined;
-}
-
-export interface SubscriptionContextParams {
-  req: express.Request;
-  res: express.Response;
-  connection: { context: { req: express.Request } };
-  payload?: unknown;
-}
-
-export interface ExpressContext {
+export interface ContextParams {
   req: express.Request;
   res: express.Response;
   connection?: ExecutionParams;
@@ -95,7 +79,9 @@ export interface ExpressContext {
 
 // function buildContext(contextParams: RegularContextParams): Context;
 // function buildContext(contextParams: SubscriptionContextParams): SubscriptionContext;
-const buildContext = <R extends ExpressContext = ExpressContext>(contextParams: R): Context => {
+const buildContext = <UserObjectType extends {}, R extends ContextParams = ContextParams>(
+  contextParams: R,
+): Context<UserObjectType> => {
   const {
     req, // set for queries and mutations
     res, // set for queries and mutations
@@ -105,13 +91,15 @@ const buildContext = <R extends ExpressContext = ExpressContext>(contextParams: 
   } = contextParams;
 
   if (connection) {
-    return buildCommonContext(connection.context.req, additionalContext);
+    return buildCommonContext<UserObjectType>(connection.context.req, additionalContext);
   }
 
+  // The UserObject is without the any in conflict: "'User' is not assignable to type 'UserObjectType'"
+  const sharedContext = buildCommonContext<UserObjectType>(req as any, additionalContext);
   return {
-    ...buildCommonContext(req, additionalContext),
+    ...sharedContext,
     authenticate: (name: string, options: AuthenticateOptions) => promisifiedAuthentication(req, res, name, options),
-    login: (user: UserTemplate, options: AuthenticateOptions) => promisifiedLogin(req, user, options),
+    login: (user: UserObjectType, options: AuthenticateOptions) => promisifiedLogin<UserObjectType>(req, user, options),
     logout: () => req.logout(),
     res,
   };
