@@ -103,7 +103,7 @@ import express from 'express';
 import session from 'express-session';
 import { ApolloServer } from 'apollo-server-express';
 import passport from 'passport';
-import { GraphQLLocalStrategy, buildContext } from 'graphql-passport';
+import { GraphQLLocalStrategy, buildContext, createOnConnect } from 'graphql-passport';
 
 ...
 const sessionMiddleware = session(options); // optional
