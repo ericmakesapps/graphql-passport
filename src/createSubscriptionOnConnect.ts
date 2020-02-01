@@ -1,3 +1,4 @@
+import { Response } from 'express';
 import { WebSocket } from './types';
 
 type MiddlewareFns = (req: WebSocket['upgradeReq'], res: Response, resolve: (r: { req: WebSocket }) => unknown) => void;
