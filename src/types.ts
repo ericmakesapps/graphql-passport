@@ -3,7 +3,8 @@ import { Request as ExpressRequest } from 'express';
 import { IncomingMessage } from 'http';
 import { ConnectionContext } from 'subscriptions-transport-ws';
 
-type DoneLoggingIn<UserObjectType extends {}> = (err: any, user: UserObjectType) => void;
+// tslint:disable-next-line:no-empty-interface
+export interface AuthInfoTemplate {}
 
 type SharedPassportContext<
   UserObjectType extends {},
