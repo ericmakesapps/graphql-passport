@@ -1,51 +1,45 @@
+import { IVerifyOptions, PassportContext } from './types';
+
+import { Request as ExpressRequest } from 'express';
 /* eslint-disable no-param-reassign */
 import { Strategy as PassportStrategy } from 'passport-strategy';
-import { Request as ExpressRequest } from 'express';
-import { PassportContext, IVerifyOptions } from './types';
 
-type VerifyFn = (username: unknown, password: unknown, done: () => void) => void;
-type VerifyFnWRequest = <U extends {}, Request extends object = ExpressRequest>(
-  req: Request | PassportContext<U, Request>,
-  username: unknown,
-  password: unknown,
-  done: (error: any, user?: any, options?: IVerifyOptions) => void,
-) => void;
+type VerifyFn<TInput, TUser extends {}, TRequest extends ExpressRequest> = ({
+  req,
+  input,
+  done,
+}: {
+  req: TRequest;
+  input: TInput;
+  done: (error: any, user: TUser, options?: IVerifyOptions) => void;
+}) => void;
 
 interface GraphQLLocalStrategyOptions {
   passReqToCallback?: boolean;
 }
 
-class GraphQLLocalStrategy<U extends {}, Request extends ExpressRequest = ExpressRequest> extends PassportStrategy {
-  constructor(
-    options?: GraphQLLocalStrategyOptions | VerifyFn | VerifyFnWRequest,
-    verify?: VerifyFn | VerifyFnWRequest,
-  ) {
+class GraphQLLocalStrategy<
+  TInput,
+  TUser extends {},
+  TRequest extends ExpressRequest = ExpressRequest
+> extends PassportStrategy {
+  constructor(verify: VerifyFn<TInput, TUser, TRequest>, options?: GraphQLLocalStrategyOptions) {
     super();
 
-    if (typeof options === 'function') {
-      this.verify = options;
-      this.passReqToCallback = false;
-    } else {
-      this.verify = verify;
-      this.passReqToCallback = options.passReqToCallback;
-    }
-    if (!this.verify) {
-      throw new TypeError('GraphQLLocalStrategy requires a verify callback');
-    }
+    this.verify = verify;
+    this.passReqToCallback = options?.passReqToCallback ?? false;
 
     this.name = 'graphql-local';
   }
 
-  verify: VerifyFn | VerifyFnWRequest;
+  verify: VerifyFn<TInput, TUser, TRequest>;
 
   passReqToCallback: boolean | undefined;
 
   name: string;
 
-  authenticate(req: Request, options: { username?: string; email?: string; password: string }) {
-    const { username, email, password } = options;
-
-    const done = (err: Error, user: U, info?: IVerifyOptions) => {
+  authenticate(req: TRequest, input: TInput) {
+    const done = (err: Error, user: TUser, info?: IVerifyOptions) => {
       if (err) {
         return this.error(err);
       }
@@ -56,11 +50,7 @@ class GraphQLLocalStrategy<U extends {}, Request extends ExpressRequest = Expres
     };
 
     if (this.passReqToCallback) {
-      // @ts-ignore - not sure how tow handle this nicely in TS
-      this.verify(req, username || email, password, done);
-    } else {
-      // @ts-ignore - not sure how tow handle this nicely in TS
-      this.verify(username || email, password, done);
+      this.verify({ req, input, done });
     }
   }
 }
