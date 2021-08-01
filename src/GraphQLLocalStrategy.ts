@@ -1,8 +1,7 @@
-import { IVerifyOptions, PassportContext } from './types';
-
 import { Request as ExpressRequest } from 'express';
 /* eslint-disable no-param-reassign */
 import { Strategy as PassportStrategy } from 'passport-strategy';
+import { IVerifyOptions } from './types';
 
 type VerifyFn<TInput, TUser extends {}, TRequest extends ExpressRequest> = ({
   req,
