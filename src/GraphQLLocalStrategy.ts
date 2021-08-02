@@ -1,5 +1,4 @@
 import { Request as ExpressRequest } from 'express';
-/* eslint-disable no-param-reassign */
 import { Strategy as PassportStrategy } from 'passport-strategy';
 import { IVerifyOptions } from './types';
 
@@ -22,18 +21,15 @@ class GraphQLLocalStrategy<
   TUser extends {},
   TRequest extends ExpressRequest = ExpressRequest
 > extends PassportStrategy {
-  constructor(verify: VerifyFn<TInput, TUser, TRequest>, options?: GraphQLLocalStrategyOptions) {
+  constructor(verify: VerifyFn<TInput, TUser, TRequest>) {
     super();
 
     this.verify = verify;
-    this.passReqToCallback = options?.passReqToCallback ?? false;
 
     this.name = 'graphql-local';
   }
 
   verify: VerifyFn<TInput, TUser, TRequest>;
-
-  passReqToCallback: boolean | undefined;
 
   name: string;
 
@@ -48,9 +44,7 @@ class GraphQLLocalStrategy<
       return this.success(user, info);
     };
 
-    if (this.passReqToCallback) {
-      this.verify({ req, input, done });
-    }
+    this.verify({ req, input, done });
   }
 }
 
