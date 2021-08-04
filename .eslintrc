@@ -1,17 +1,36 @@
 {
-  "plugins": ["prettier"],
-  "extends": ["airbnb-typescript/base", "plugin:prettier/recommended"],
+  "plugins": [
+    "prettier"
+  ],
+  "extends": [
+    "airbnb-typescript/base",
+    "plugin:prettier/recommended"
+  ],
   "rules": {
-    "comma-dangle": ["error", "always-multiline"],
-    "prettier/prettier": ["error"],
+    "comma-dangle": [
+      "error",
+      "always-multiline"
+    ],
+    "prettier/prettier": [
+      "error"
+    ],
     "@typescript-eslint/indent": 0
   },
   "overrides": [
     {
-      "files": ["**/*.spec.ts", "**/*.test.ts", "**/__mocks__/*.ts"],
+      "files": [
+        "**/*.spec.ts",
+        "**/*.test.ts",
+        "**/__mocks__/*.ts"
+      ],
       "env": {
         "jest": true
       }
     }
-  ]
+  ],
+  "parserOptions": {
+    "project": [
+      "tsconfig.json"
+    ]
+  },
 }
