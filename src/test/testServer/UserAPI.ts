@@ -13,19 +13,29 @@ export class UserAPI extends DataSource {
   constructor() {
     super();
     this.users = [
-      { id: 1, name: 'regular', password: '123abc', permission: 'basic' },
-      { id: 2, name: 'admin', password: '321edf', permission: 'admin' },
+      {
+        id: 1,
+        name: 'regular',
+        password: '123abc',
+        permission: 'basic',
+      },
+      {
+        id: 2,
+        name: 'admin',
+        password: '321edf',
+        permission: 'admin',
+      },
     ];
   }
 
   static instance: UserAPI | undefined;
 
   find(id: number) {
-    return this.users.find(n => n.id === id);
+    return this.users.find((n) => n.id === id);
   }
 
   authenticate(name: string, password: string) {
-    const user = this.users.find(n => n.name === name);
+    const user = this.users.find((n) => n.name === name);
     if (!user) {
       return null;
     }

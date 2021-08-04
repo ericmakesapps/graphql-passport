@@ -17,11 +17,11 @@ export class LaunchAPI extends DataSource {
   }
 
   find(id: number) {
-    return this.launches.find(l => l.id === id);
+    return this.launches.find((l) => l.id === id);
   }
 
   findName(name: string) {
-    return this.launches.find(l => l.name === name);
+    return this.launches.find((l) => l.name === name);
   }
 
   add(name: string) {
@@ -29,7 +29,7 @@ export class LaunchAPI extends DataSource {
     if (existingLaunch) {
       throw new Error(`The '${name}' already exists`);
     }
-    const maxId = Math.max(...this.launches.map(l => l.id));
+    const maxId = Math.max(...this.launches.map((l) => l.id));
     const newLaunch: Launch = { id: maxId + 1, name };
     this.launches.push(newLaunch);
     return newLaunch;

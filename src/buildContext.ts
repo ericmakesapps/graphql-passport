@@ -4,21 +4,18 @@ import express from 'express';
 import { ExecutionParams } from 'subscriptions-transport-ws';
 import { AuthenticateReturn, IVerifyOptions } from './types';
 
-const buildPromisifiedAuthentication = <UserObjectType extends {}>(
-  passport: { authenticate: Function } = originalPassport,
-) => (req: express.Request, res: express.Response, name: string, options: AuthenticateOptions) => {
-  const p = new Promise<AuthenticateReturn<UserObjectType>>((resolve, reject) => {
-    const done = (err: Error | undefined, user: UserObjectType | undefined, info?: IVerifyOptions | undefined) => {
-      if (err) reject(err);
-      else resolve({ user, info });
-    };
+const buildPromisifiedAuthentication =
+  <UserObjectType extends {}>(passport: { authenticate: Function } = originalPassport) =>
+  (req: express.Request, res: express.Response, name: string, options: AuthenticateOptions) =>
+    new Promise<AuthenticateReturn<UserObjectType>>((resolve, reject) => {
+      const done = (err: Error | undefined, user: UserObjectType | undefined, info?: IVerifyOptions | undefined) => {
+        if (err) reject(err);
+        else resolve({ user, info });
+      };
 
-    const authFn = passport.authenticate(name, options, done);
-    return authFn(req, res);
-  });
-
-  return p;
-};
+      const authFn = passport.authenticate(name, options, done);
+      return authFn(req, res);
+    });
 
 const promisifiedLogin = <UserObjectType extends {}>(
   req: express.Request,

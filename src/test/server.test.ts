@@ -1,6 +1,5 @@
-import { agent } from 'supertest';
-import server from './testServer';
 import urlString from './helpers/urlString';
+import { getServerAgent } from './testServer';
 
 describe('Test fullscale server implementation', () => {
   const loginQuery = `
@@ -21,7 +20,7 @@ describe('Test fullscale server implementation', () => {
   }`;
 
   test('Retrieve basic queries before logging in', async () => {
-    const serverAgent = agent(server);
+    const serverAgent = await getServerAgent();
     let ret = await serverAgent
       .get(urlString({ query: meQuery }))
       .then(({ text }: { text: string }) => JSON.parse(text));
@@ -38,12 +37,12 @@ describe('Test fullscale server implementation', () => {
   });
 
   test('Retrieve self after logging in up until logout', async () => {
+    const serverAgent = await getServerAgent();
+
     const variables = {
       name: 'regular',
       password: 'bad password',
     };
-
-    const serverAgent = agent(server);
 
     let ret = await serverAgent
       .post('/graphql')
@@ -80,7 +79,7 @@ describe('Test fullscale server implementation', () => {
   });
 
   test('Authentication at a upper level should prevent access to subelements', async () => {
-    const serverAgent = agent(server);
+    const serverAgent = await getServerAgent();
     const query = `
       query find($id: ID!) {
         launch {
@@ -122,7 +121,7 @@ describe('Test fullscale server implementation', () => {
   });
 
   test('Authentication at a upper level should prevent access to subelements with check of user permissions', async () => {
-    const serverAgent = agent(server);
+    const serverAgent = await getServerAgent();
     const query = `
       mutation addLaunch($name: String!) {
         launch {

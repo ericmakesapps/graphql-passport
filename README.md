@@ -169,7 +169,7 @@ This library cannot know what fields the user type contains in a given project. 
 First, we need to define the user type. In this example the type is defined in a file called `MyUser.ts` and has the fields `firstName` and `lastName`.
 
 ```ts
-export type MyUser {
+export type MyUser = {
   firstName: string;
   lastName: string;
 }
