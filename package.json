@@ -58,7 +58,7 @@
     "express": "^4.17.1",
     "graphql": "^15.5.1",
     "subscriptions-transport-ws": "^0.9.16",
-    "ws": "8.0.0"
+    "ws": "7.x || 8.x"
   },
   "peerDependencies": {
     "express": "4.x",
