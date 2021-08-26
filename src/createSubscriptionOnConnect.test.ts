@@ -18,7 +18,7 @@ describe('createSubscriptionOnConnect', () => {
 
     const onConnect = createSubscriptionOnConnect([middleware1, middleware2, middleware3]);
     const connectionParams = {};
-    const websocket = { upgradeReq: {} } as any as WebSocket;
+    const websocket = ({ upgradeReq: {} } as any) as WebSocket;
     const connectionContext = await onConnect(connectionParams, websocket);
 
     expect(connectionContext.req).toEqual({

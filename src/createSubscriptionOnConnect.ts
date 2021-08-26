@@ -25,7 +25,7 @@ const executeMiddlewares = (
 const createSubscriptionOnConnect = <T extends ReturnOnConnect>(middlewares: MiddlewareFns[]) => {
   // This is called on each message that has a GQL_CONNECTION_INIT message type
   const onConnect = (connectionParams: Object, webSocket: WebSocket) =>
-    new Promise<T>((resolve) => executeMiddlewares(middlewares, webSocket, resolve));
+    new Promise<T>(resolve => executeMiddlewares(middlewares, webSocket, resolve));
 
   return onConnect;
 };

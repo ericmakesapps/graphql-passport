@@ -6,7 +6,7 @@ describe('GraphQLLocalStrategy test', () => {
     const verify = jest.fn();
     // @ts-ignore
     const strategy = new GraphQLLocalStrategy(verify);
-    strategy.authenticate({} as any as Request, {
+    strategy.authenticate(({} as any) as Request, {
       username: 'some-username',
       password: 'qwerty',
     });
@@ -17,7 +17,7 @@ describe('GraphQLLocalStrategy test', () => {
     const verify = jest.fn();
     // @ts-ignore
     const strategy = new GraphQLLocalStrategy(verify);
-    strategy.authenticate({} as any as Request, {
+    strategy.authenticate(({} as any) as Request, {
       email: 'max@mustermann.com',
       password: 'qwerty',
     });
@@ -28,7 +28,7 @@ describe('GraphQLLocalStrategy test', () => {
     const verify = jest.fn();
     // @ts-ignore
     const strategy = new GraphQLLocalStrategy({ passReqToCallback: true }, verify);
-    const req = { test: 'test' } as any as Request;
+    const req = ({ test: 'test' } as any) as Request;
     strategy.authenticate(req, { email: 'max@mustermann.com', password: 'qwerty' });
     expect(verify).toHaveBeenCalledWith(req, 'max@mustermann.com', 'qwerty', expect.any(Function));
   });
@@ -38,7 +38,7 @@ describe('GraphQLLocalStrategy test', () => {
     // @ts-ignore
     const strategy = new GraphQLLocalStrategy(verify);
     strategy.success = jest.fn();
-    strategy.authenticate({} as any as Request, {
+    strategy.authenticate(({} as any) as Request, {
       email: 'max@mustermann.com',
       password: 'qwerty',
     });
@@ -52,7 +52,7 @@ describe('GraphQLLocalStrategy test', () => {
     // @ts-ignore
     const strategy = new GraphQLLocalStrategy(verify);
     strategy.error = jest.fn();
-    strategy.authenticate({} as any as Request, {
+    strategy.authenticate(({} as any) as Request, {
       email: 'max@mustermann.com',
       password: 'qwerty',
     });
@@ -66,7 +66,7 @@ describe('GraphQLLocalStrategy test', () => {
     // @ts-ignore
     const strategy = new GraphQLLocalStrategy(verify);
     strategy.fail = jest.fn();
-    strategy.authenticate({} as any as Request, {
+    strategy.authenticate(({} as any) as Request, {
       email: 'max@mustermann.com',
       password: 'qwerty',
     });
