@@ -9,10 +9,10 @@ export interface AuthInfoTemplate {}
 type SharedPassportContext<
   UserObjectType extends {},
   Credentials extends {},
-  AuthInfoTemplate extends {},
-  Request extends object,
+  AuthInfo extends AuthInfoTemplate,
+  Request extends object
 > = {
-  authInfo?: AuthInfoTemplate;
+  authInfo?: AuthInfo;
   user?: UserObjectType;
   getUser(): UserObjectType | undefined;
 
@@ -32,16 +32,16 @@ type SharedPassportContext<
 export type PassportContext<
   UserObjectType extends {},
   Credentials extends {},
-  AuthInfoTemplate extends {} = {},
-  Request extends object = ExpressRequest,
-> = SharedPassportContext<UserObjectType, Credentials, AuthInfoTemplate, Request>;
+  AuthInfo extends AuthInfoTemplate = AuthInfoTemplate,
+  Request extends object = ExpressRequest
+> = SharedPassportContext<UserObjectType, Credentials, AuthInfo, Request>;
 
 export type PassportSubscriptionContext<
   UserObjectType extends {},
   Credentials extends {},
-  AuthInfoTemplate extends {} = {},
-  SubscriptionRequest extends object = ConnectionContext,
-> = SharedPassportContext<UserObjectType, Credentials, AuthInfoTemplate, SubscriptionRequest>;
+  AuthInfo extends AuthInfoTemplate = AuthInfoTemplate,
+  SubscriptionRequest extends object = ConnectionContext
+> = SharedPassportContext<UserObjectType, Credentials, AuthInfo, SubscriptionRequest>;
 
 export interface IVerifyOptions {
   info: boolean;
