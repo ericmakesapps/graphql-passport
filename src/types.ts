@@ -10,7 +10,7 @@ type SharedPassportContext<
   UserObjectType extends {},
   Credentials extends {},
   AuthInfoTemplate extends {},
-  Request extends object,
+  Request extends object
 > = {
   authInfo?: AuthInfoTemplate;
   user?: UserObjectType;
@@ -33,14 +33,14 @@ export type PassportContext<
   UserObjectType extends {},
   Credentials extends {},
   AuthInfoTemplate extends {} = {},
-  Request extends object = ExpressRequest,
+  Request extends object = ExpressRequest
 > = SharedPassportContext<UserObjectType, Credentials, AuthInfoTemplate, Request>;
 
 export type PassportSubscriptionContext<
   UserObjectType extends {},
   Credentials extends {},
   AuthInfoTemplate extends {} = {},
-  SubscriptionRequest extends object = ConnectionContext,
+  SubscriptionRequest extends object = ConnectionContext
 > = SharedPassportContext<UserObjectType, Credentials, AuthInfoTemplate, SubscriptionRequest>;
 
 export interface IVerifyOptions {
