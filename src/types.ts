@@ -16,7 +16,7 @@ type SharedPassportContext<
   user?: UserObjectType;
   getUser(): UserObjectType | undefined;
 
-  login(user: Credentials, options?: any): Promise<void>;
+  login(user: UserObjectType, options?: any): Promise<void>;
 
   logout(): void;
   logOut(): void;
