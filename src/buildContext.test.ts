@@ -44,7 +44,7 @@ describe('context.login', () => {
   test('calls req.login', async () => {
     const req = { login: jest.fn((user, options, callback) => callback(null)) } as any;
     const res = { res: true };
-    const context = buildContext(({ req, res } as any) as ContextParams);
+    const context = buildContext({ req, res } as any as ContextParams);
 
     const options = { options: true };
     const user = { email: 'max@mustermann.com', password: 'qwerty' };
@@ -56,7 +56,7 @@ describe('context.login', () => {
   test('context.login rejects when passport returns error', async () => {
     const expectedError = new Error('authentication failed');
     const req = { login: jest.fn((user, options, callback) => callback(expectedError)) };
-    const context = buildContext(({ req, res: {} } as any) as ContextParams);
+    const context = buildContext({ req, res: {} } as any as ContextParams);
     let actualError: Error;
 
     try {
