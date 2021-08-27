@@ -1,7 +1,7 @@
-const passportMock = jest.genMockFromModule('passport') as {
+const passportMock = jest.genMockFromModule<{
   authenticateMiddleware: jest.Mock;
   authenticate: jest.Mock;
-};
+}>('passport');
 
 const authenticateMiddleware = jest.fn();
 

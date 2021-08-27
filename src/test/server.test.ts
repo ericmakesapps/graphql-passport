@@ -1,23 +1,28 @@
 import urlString from './helpers/urlString';
 import { getServerAgent } from './testServer';
 
+jest.unmock('passport');
+
 describe('Test fullscale server implementation', () => {
   const loginQuery = `
-  mutation login($name: String!, $password: String!) {
-    login(name: $name, password: $password)
-  }`;
+    mutation login($name: String!, $password: String!) {
+      login(name: $name, password: $password)
+    }
+  `;
 
   const logoutQuery = `
-  mutation logout {
-    logout
-  }`;
+    mutation logout {
+      logout
+    }
+  `;
 
   const meQuery = `
-  {
-    me {
-      name
+    query getMyName {
+      me {
+        name
+      }
     }
-  }`;
+  `;
 
   test('Retrieve basic queries before logging in', async () => {
     const serverAgent = await getServerAgent();

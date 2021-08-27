@@ -10,6 +10,8 @@ import { MyDataSources } from './MyContext';
 import resolvers from './resolvers';
 import typeDefs from './typeDefs';
 
+jest.unmock('passport');
+
 export const startServer = async (): Promise<Express> => {
   const app = express();
   app.use(

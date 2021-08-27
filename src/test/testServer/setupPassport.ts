@@ -1,21 +1,24 @@
+import passport from 'passport';
 import { AuthenticationError } from 'apollo-server';
 import { GraphQLLocalStrategy } from '../../index';
-import { User, UserAPI } from './UserAPI';
+import { User as UserModel, UserAPI } from './UserAPI';
 
-const realPassword = jest.requireActual('passport');
+declare global {
+  namespace Express {
+    interface User extends UserModel {}
+  }
+}
 
 export default () => {
-  if (!realPassword.serializeUser) {
-    return realPassword;
+  if (!passport.serializeUser) {
+    return passport;
   }
 
-  // @ts-ignore
-  realPassword.serializeUser<User, number>((user, done) => {
+  passport.serializeUser<number>((user, done) => {
     done(undefined, user.id);
   });
 
-  // @ts-ignore
-  realPassword.deserializeUser<User, number>(async (id, done) => {
+  passport.deserializeUser<number>(async (id, done) => {
     try {
       const userAPI = UserAPI.getInstance();
       const user = userAPI.find(id);
@@ -28,7 +31,7 @@ export default () => {
   const userAuthenticator = (
     name: string,
     password: string,
-    done: (error: Error | null, authenticatedUser: User) => unknown,
+    done: (error: Error | null, authenticatedUser: UserModel) => unknown,
   ) => {
     // Adjust this callback to your needs
     const userAPI = UserAPI.getInstance();
@@ -37,7 +40,7 @@ export default () => {
     done(error, authenticatedUser);
   };
 
-  realPassword.use(new GraphQLLocalStrategy(userAuthenticator));
+  passport.use(new GraphQLLocalStrategy(userAuthenticator));
 
-  return realPassword;
+  return passport;
 };
