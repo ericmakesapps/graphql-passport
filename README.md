@@ -15,7 +15,7 @@ context.getUser();
 
 ## Usage
 
-For a full working example including detailed instructions visit this blog post about [how to authenticate with user credentials using GraphQL and passport](https://jkettmann.com/authentication-with-credentials-using-graphql-and-passport/). Continue reading here for a short summary.
+For a full working example including detailed instructions visit this blog post about [how to authenticate with user credentials using GraphQL and passport](https://jkettmann.com/authentication-and-authorization-with-graphql-and-passport). Continue reading here for a short summary.
 
 Initialize the `GraphQLLocalStrategy` and create the GraphQL context by using `buildContext`.
 
@@ -70,7 +70,7 @@ passport.use(
 );
 ```
 
-Inside your resolvers you can call `context.authenticate` to authenticate the user with the given credentials. If you want to use `expression-session` as well you need to call `context.login(user)` after `authenticate`.
+Inside your resolvers you can call `context.authenticate` to authenticate the user with the given credentials. If you want to use `express-session` as well you need to call `context.login(user)` after `authenticate`.
 
 ```js
 const resolvers = {
