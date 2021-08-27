@@ -1,4 +1,4 @@
-import { ForbiddenError } from 'apollo-server';
+import { AuthenticationError, ForbiddenError } from 'apollo-server';
 import { MyContext } from './MyContext';
 
 const resolvers = {
@@ -26,9 +26,12 @@ const resolvers = {
       { name, password }: { name: string; password: string },
       { authenticate, login }: MyContext,
     ) {
-      const { user } = await authenticate('graphql-local', { username: name, password });
+      const { user, info } = await authenticate('graphql-local', { username: name, password });
+      if (!user) {
+        throw new AuthenticationError(`Failed to login: ${info}`);
+      }
       await login(user);
-      return !!user;
+      return user;
     },
     async logout(_: unknown, __: unknown, { logout }: MyContext) {
       try {
