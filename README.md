@@ -70,7 +70,7 @@ passport.use(
 );
 ```
 
-Inside your resolvers you can call `context.authenticate` to authenticate the user with the given credentials. If you want to use `expression-session` as well you need to call `context.login(user)` after `authenticate`.
+Inside your resolvers you can call `context.authenticate` to authenticate the user with the given credentials. If you want to use `express-session` as well you need to call `context.login(user)` after `authenticate`.
 
 ```js
 const resolvers = {
