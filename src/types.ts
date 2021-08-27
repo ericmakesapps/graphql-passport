@@ -24,7 +24,7 @@ type SharedPassportContext<
   isAuthenticated(): boolean;
   isUnauthenticated(): boolean;
 
-  authenticate(type: string, credentials: Credentials): Promise<{ user: UserObjectType }>;
+  authenticate(type: string, credentials: Credentials): Promise<AuthenticateReturn<UserObjectType>>;
 
   req: Request;
 };

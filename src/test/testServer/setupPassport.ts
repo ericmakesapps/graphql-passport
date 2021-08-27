@@ -1,5 +1,4 @@
 import passport from 'passport';
-import { AuthenticationError } from 'apollo-server';
 import { GraphQLLocalStrategy } from '../../index';
 import { User as UserModel, UserAPI } from './UserAPI';
 
@@ -31,13 +30,12 @@ export default () => {
   const userAuthenticator = (
     name: string,
     password: string,
-    done: (error: Error | null, authenticatedUser: UserModel) => unknown,
+    done: (error: Error | null, authenticatedUser: UserModel, info?: string) => unknown,
   ) => {
     // Adjust this callback to your needs
     const userAPI = UserAPI.getInstance();
     const authenticatedUser = userAPI.authenticate(name, password);
-    const error = authenticatedUser ? null : new AuthenticationError('no matching user');
-    done(error, authenticatedUser);
+    done(null, authenticatedUser, !authenticatedUser && 'failed to authenticate user');
   };
 
   passport.use(new GraphQLLocalStrategy(userAuthenticator));

@@ -6,7 +6,9 @@ jest.unmock('passport');
 describe('Test fullscale server implementation', () => {
   const loginQuery = `
     mutation login($name: String!, $password: String!) {
-      login(name: $name, password: $password)
+      login(name: $name, password: $password) {
+        name
+      }
     }
   `;
 
@@ -54,7 +56,12 @@ describe('Test fullscale server implementation', () => {
       .send({ query: loginQuery, variables })
       .then(({ text }: { text: string }) => JSON.parse(text));
 
-    expect(ret).toHaveProperty('errors.0.message', 'no matching user');
+    expect(ret).toHaveProperty(
+      'errors',
+      expect.arrayContaining([
+        expect.objectContaining({ message: expect.stringContaining('failed to authenticate user') }),
+      ]),
+    );
 
     variables.password = '123abc';
 
@@ -64,7 +71,7 @@ describe('Test fullscale server implementation', () => {
       .then(({ text }: { text: string }) => JSON.parse(text));
 
     expect(ret).not.toHaveProperty('errors');
-    expect(ret).toHaveProperty('data.login', true);
+    expect(ret).toHaveProperty('data.login.name', variables.name);
 
     ret = await serverAgent.get(urlString({ query: meQuery })).then(({ text }: { text: string }) => JSON.parse(text));
 
@@ -114,7 +121,7 @@ describe('Test fullscale server implementation', () => {
       .then(({ text }: { text: string }) => JSON.parse(text));
 
     expect(ret).not.toHaveProperty('errors');
-    expect(ret).toHaveProperty('data.login', true);
+    expect(ret).toHaveProperty('data.login.name', variables.name);
 
     ret = await serverAgent
       .post('/graphql')
@@ -156,7 +163,7 @@ describe('Test fullscale server implementation', () => {
       .then(({ text }: { text: string }) => JSON.parse(text));
 
     expect(ret).not.toHaveProperty('errors');
-    expect(ret).toHaveProperty('data.login', true);
+    expect(ret).toHaveProperty('data.login.name', variables.name);
 
     ret = await serverAgent
       .post('/graphql')
@@ -176,7 +183,7 @@ describe('Test fullscale server implementation', () => {
       .then(({ text }: { text: string }) => JSON.parse(text));
 
     expect(ret).not.toHaveProperty('errors');
-    expect(ret).toHaveProperty('data.login', true);
+    expect(ret).toHaveProperty('data.login.name', variables.name);
 
     ret = await serverAgent
       .post('/graphql')
