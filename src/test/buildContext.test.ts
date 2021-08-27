@@ -1,19 +1,22 @@
 import passport from 'passport';
-import buildContext, { ContextParams } from './buildContext';
+import buildContext, { ContextParams } from '../buildContext';
+
+// @ts-ignore - special mock function for testing that middleware is activated
+const mockedAuthMiddleWare = passport.authenticateMiddleware as jest.MockedFunction<CallableFunction>;
+const mockedAuthenticat = passport.authenticate as jest.MockedFunction<typeof passport.authenticate>;
 
 describe('context.authenticate', () => {
   test('calls passport authenticate', async () => {
     const req = { req: true } as any;
     const res = { res: true } as any;
     const params = { req, res } as ContextParams;
-    const context = await buildContext(params);
+    const context = buildContext(params);
 
     const options = { options: true };
     await context.authenticate('strategy-name', options);
 
-    // @ts-ignore
-    expect(passport.authenticateMiddleware).toHaveBeenCalledWith(req, res);
-    expect(passport.authenticate).toHaveBeenCalledWith('strategy-name', options, expect.any(Function));
+    expect(mockedAuthMiddleWare).toHaveBeenCalledWith(req, res);
+    expect(mockedAuthenticat).toHaveBeenCalledWith('strategy-name', options, expect.any(Function));
   });
 
   test('resolves with user and info data', async () => {
@@ -25,8 +28,7 @@ describe('context.authenticate', () => {
 
   test('rejects when passport returns error', async () => {
     const expectedError = new Error('authentication failed');
-    // @ts-ignore
-    passport.authenticate.mockImplementationOnce((name, options, done) => done(expectedError));
+    mockedAuthenticat.mockImplementationOnce((name, options, done) => done(expectedError));
     const context = buildContext({ req: {}, res: {} } as ContextParams);
     let actualError: Error;
 

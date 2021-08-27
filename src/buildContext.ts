@@ -4,13 +4,13 @@ import express from 'express';
 import { ExecutionParams } from 'subscriptions-transport-ws';
 import { AuthenticateReturn, IVerifyOptions } from './types';
 
-const promisifiedAuthentication = <UserObjectType extends {}>(
+const promisifiedAuthentication = <UserObjectType extends Express.User>(
   req: express.Request,
   res: express.Response,
   name: string,
   options: AuthenticateOptions,
-) => {
-  const p = new Promise<AuthenticateReturn<UserObjectType>>((resolve, reject) => {
+) =>
+  new Promise<AuthenticateReturn<UserObjectType>>((resolve, reject) => {
     const done = (err: Error | undefined, user: UserObjectType | undefined, info?: IVerifyOptions | undefined) => {
       if (err) reject(err);
       else resolve({ user, info });
@@ -20,10 +20,7 @@ const promisifiedAuthentication = <UserObjectType extends {}>(
     return authFn(req, res);
   });
 
-  return p;
-};
-
-const promisifiedLogin = <UserObjectType extends {}>(
+const promisifiedLogin = <UserObjectType extends Express.User>(
   req: express.Request,
   user: UserObjectType,
   options?: AuthenticateOptions,
@@ -37,12 +34,12 @@ const promisifiedLogin = <UserObjectType extends {}>(
     req.login(user, options, done);
   });
 
-interface CommonRequest<UserObjectType extends {}>
+interface CommonRequest<UserObjectType extends Express.User>
   extends Pick<Context<UserObjectType>, 'isAuthenticated' | 'isUnauthenticated'> {
   user?: UserObjectType;
 }
 
-export interface Context<UserObjectType extends {}> {
+export interface Context<UserObjectType extends Express.User> {
   isAuthenticated: () => boolean;
   isUnauthenticated: () => boolean;
   getUser: () => UserObjectType;
@@ -53,7 +50,10 @@ export interface Context<UserObjectType extends {}> {
   req: CommonRequest<UserObjectType>;
 }
 
-const buildCommonContext = <UserObjectType extends {}>(req: CommonRequest<UserObjectType>, additionalContext: {}) => ({
+const buildCommonContext = <UserObjectType extends Express.User>(
+  req: CommonRequest<UserObjectType>,
+  additionalContext: {},
+) => ({
   isAuthenticated: () => req.isAuthenticated(),
   isUnauthenticated: () => req.isUnauthenticated(),
   getUser: () => req.user,
@@ -79,7 +79,7 @@ export interface ContextParams {
 
 // function buildContext(contextParams: RegularContextParams): Context;
 // function buildContext(contextParams: SubscriptionContextParams): SubscriptionContext;
-const buildContext = <UserObjectType extends {}, R extends ContextParams = ContextParams>(
+const buildContext = <UserObjectType extends Express.User, R extends ContextParams = ContextParams>(
   contextParams: R,
 ): Context<UserObjectType> => {
   const {
