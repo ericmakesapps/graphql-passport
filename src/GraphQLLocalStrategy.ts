@@ -15,7 +15,18 @@ interface GraphQLLocalStrategyOptions {
   passReqToCallback?: boolean;
 }
 
+interface GraphQLLocalStrategyOptionsWithRequest extends GraphQLLocalStrategyOptions {
+  passReqToCallback: true;
+}
+
+interface GraphQLLocalStrategyOptionsWithoutRequest extends GraphQLLocalStrategyOptions {
+  passReqToCallback?: false;
+}
+
 class GraphQLLocalStrategy<U extends {}, Request extends ExpressRequest = ExpressRequest> extends PassportStrategy {
+  constructor(verify: VerifyFn);
+  constructor(options: GraphQLLocalStrategyOptionsWithoutRequest, verify: VerifyFn);
+  constructor(options: GraphQLLocalStrategyOptionsWithRequest, verify: VerifyFnWRequest);
   constructor(
     options?: GraphQLLocalStrategyOptions | VerifyFn | VerifyFnWRequest,
     verify?: VerifyFn | VerifyFnWRequest,
