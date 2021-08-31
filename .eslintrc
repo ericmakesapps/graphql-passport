@@ -3,6 +3,7 @@
     "prettier"
   ],
   "extends": [
+    "airbnb-base",
     "airbnb-typescript/base",
     "plugin:prettier/recommended"
   ],
