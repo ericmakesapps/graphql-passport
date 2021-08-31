@@ -1,5 +1,6 @@
 import passport from 'passport';
 import buildContext, { ContextParams } from '../buildContext';
+import { User } from './testServer/UserAPI';
 
 // @ts-ignore - special mock function for testing that middleware is activated
 const mockedAuthMiddleWare = passport.authenticateMiddleware as jest.MockedFunction<CallableFunction>;
@@ -49,7 +50,7 @@ describe('context.login', () => {
     const context = buildContext({ req, res } as any as ContextParams);
 
     const options = { options: true };
-    const user = { email: 'max@mustermann.com', password: 'qwerty' };
+    const user = { email: 'max@mustermann.com', password: 'qwerty' } as unknown as User;
     await context.login(user, options);
 
     expect(req.login).toHaveBeenCalledWith(user, options, expect.any(Function));
@@ -63,7 +64,7 @@ describe('context.login', () => {
 
     try {
       const options = { options: true };
-      const user = { email: 'max@mustermann.com', password: 'qwerty' };
+      const user = { email: 'max@mustermann.com', password: 'qwerty' } as unknown as User;
       await context.login(user, options);
     } catch (e) {
       actualError = e;
