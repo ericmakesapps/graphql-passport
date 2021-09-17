@@ -1,9 +1,9 @@
 /* eslint-disable no-param-reassign */
 import { Strategy as PassportStrategy } from 'passport-strategy';
 import { Request as ExpressRequest } from 'express';
-import { PassportContext, IVerifyOptions } from './types';
+import { PassportContext, InfoArgument } from './types';
 
-type DoneFn = (error: any, user?: any, options?: IVerifyOptions) => void;
+type DoneFn = (error: any, user?: any, info?: InfoArgument) => void;
 type VerifyFn = (username: unknown, password: unknown, done: DoneFn) => void;
 type VerifyFnWRequest = <U extends {}, Request extends object = ExpressRequest>(
   req: Request | PassportContext<U, Request>,
@@ -57,7 +57,7 @@ class GraphQLLocalStrategy<U extends {}, Request extends ExpressRequest = Expres
   authenticate(req: Request, options: { username?: string; email?: string; password: string }) {
     const { username, email, password } = options;
 
-    const done = (err: Error, user: U, info?: IVerifyOptions) => {
+    const done = (err: Error, user: U, info?: InfoArgument) => {
       if (err) {
         return this.error(err);
       }

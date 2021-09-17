@@ -2,7 +2,7 @@
 import passport, { AuthenticateOptions } from 'passport';
 import express from 'express';
 import { ExecutionParams } from 'subscriptions-transport-ws';
-import { AuthenticateReturn, IVerifyOptions } from './types';
+import { AuthenticateReturn, InfoArgument } from './types';
 
 const promisifiedAuthentication = <UserObjectType extends Express.User>(
   req: express.Request,
@@ -11,7 +11,7 @@ const promisifiedAuthentication = <UserObjectType extends Express.User>(
   options: AuthenticateOptions,
 ) =>
   new Promise<AuthenticateReturn<UserObjectType>>((resolve, reject) => {
-    const done = (err: Error | undefined, user: UserObjectType | undefined, info?: IVerifyOptions | undefined) => {
+    const done = (err: Error | undefined, user: UserObjectType | undefined, info?: InfoArgument | undefined) => {
       if (err) reject(err);
       else resolve({ user, info });
     };

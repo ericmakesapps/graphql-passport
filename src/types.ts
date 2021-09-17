@@ -43,14 +43,16 @@ export type PassportSubscriptionContext<
   SubscriptionRequest extends object = ConnectionContext,
 > = SharedPassportContext<UserObjectType, Credentials, AuthInfo, SubscriptionRequest>;
 
-export interface IVerifyOptions {
-  info: boolean;
-  message?: string;
-}
+export type InfoArgument =
+  | string
+  | {
+      info: boolean;
+      message?: string;
+    };
 
 export interface AuthenticateReturn<UserObjectType extends {}> {
   user: UserObjectType | undefined;
-  info: IVerifyOptions | undefined;
+  info: InfoArgument | undefined;
 }
 
 export interface WebSocket<Request extends {} = ExpressRequest> extends ws {

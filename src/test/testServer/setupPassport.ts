@@ -1,5 +1,6 @@
 import passport from 'passport';
 import { GraphQLLocalStrategy } from '../../index';
+import { InfoArgument } from '../../types';
 import { User as UserModel, UserAPI } from './UserAPI';
 
 declare global {
@@ -30,7 +31,7 @@ export default () => {
   const userAuthenticator = (
     name: string,
     password: string,
-    done: (error: Error | null, authenticatedUser: UserModel, info?: string) => unknown,
+    done: (error: Error | null, authenticatedUser: UserModel, info?: InfoArgument) => unknown,
   ) => {
     // Adjust this callback to your needs
     const userAPI = UserAPI.getInstance();
