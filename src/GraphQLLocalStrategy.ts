@@ -3,12 +3,13 @@ import { Strategy as PassportStrategy } from 'passport-strategy';
 import { Request as ExpressRequest } from 'express';
 import { PassportContext, IVerifyOptions } from './types';
 
-type VerifyFn = (username: unknown, password: unknown, done: () => void) => void;
+type DoneFn = (error: any, user?: any, options?: IVerifyOptions) => void;
+type VerifyFn = (username: unknown, password: unknown, done: DoneFn) => void;
 type VerifyFnWRequest = <U extends {}, Request extends object = ExpressRequest>(
   req: Request | PassportContext<U, Request>,
   username: unknown,
   password: unknown,
-  done: (error: any, user?: any, options?: IVerifyOptions) => void,
+  done: DoneFn,
 ) => void;
 
 interface GraphQLLocalStrategyOptions {
