@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "tsc --noEmit --pretty && npm run clean && npm run build:types && npm run build:js && npm run build:post",
-    "build:types": "tsc --emitDeclarationOnly",
+    "build:types": "tsc --emitDeclarationOnly --project tsconfig-build.json",
     "build:js": "babel src --extensions '.ts,.tsx' --source-maps --out-dir lib --ignore 'src/test'",
     "build:post": "rimraf lib/test",
     "clean": "rimraf lib",
