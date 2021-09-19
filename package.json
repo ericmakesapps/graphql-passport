@@ -12,7 +12,7 @@
     "lint": "tsc --noEmit && eslint \"src/**/*.{js,ts}\" --quiet --fix",
     "check-types": "tsc",
     "watch-ts": "tsc -w",
-    "prepublish": "npm run lint && npm run test && npm run build",
+    "prepare": "npm run lint && npm run test && npm run build",
     "test": "jest src",
     "test:watch": "jest src --watch"
   },
