@@ -78,8 +78,8 @@ describe('context.login', () => {
       logout: () => {},
       isAuthenticated: () => {},
       isUnauthenticated: () => {},
-    } as ContextParams['req'];
-    const context = buildContext({ req, res: {} as any });
+    };
+    const context = buildContext({ req, res: {} } as any as ContextParams);
     expect(context).toEqual(
       expect.objectContaining({
         logout: expect.any(Function),
