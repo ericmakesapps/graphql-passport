@@ -34,6 +34,16 @@ const promisifiedLogin = <UserObjectType extends Express.User>(
     req.login(user, options, done);
   });
 
+const promisifiedLogout = (req: express.Request, options?: { keepSessionInfo?: boolean }) =>
+  new Promise<void>((resolve, reject) => {
+    const done = (err: Error | undefined) => {
+      if (err) reject(err);
+      else resolve();
+    };
+
+    req.logout(options, done);
+  });
+
 interface CommonRequest<UserObjectType extends Express.User>
   extends Pick<Context<UserObjectType>, 'isAuthenticated' | 'isUnauthenticated'> {
   user?: UserObjectType;
@@ -45,7 +55,7 @@ export interface Context<UserObjectType extends Express.User> {
   getUser: () => UserObjectType;
   authenticate: (strategyName: string, options?: object) => Promise<AuthenticateReturn<UserObjectType>>;
   login: (user: UserObjectType, options?: object) => Promise<void>;
-  logout: () => void;
+  logout: (options?: object) => Promise<void>;
   res?: express.Response;
   req: CommonRequest<UserObjectType>;
 }
@@ -100,7 +110,7 @@ const buildContext = <UserObjectType extends Express.User, R extends ContextPara
     ...sharedContext,
     authenticate: (name: string, options: AuthenticateOptions) => promisifiedAuthentication(req, res, name, options),
     login: (user: UserObjectType, options: AuthenticateOptions) => promisifiedLogin<UserObjectType>(req, user, options),
-    logout: () => req.logout(),
+    logout: (options: { keepSessionInfo?: boolean }) => promisifiedLogout(req, options),
     res,
   };
 };
