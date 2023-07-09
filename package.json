@@ -29,7 +29,6 @@
   "author": "Johannes Kettmann",
   "license": "MIT",
   "dependencies": {
-    "@types/node-fetch": "^3.0.2",
     "passport-strategy": "^1.0.0"
   },
   "devDependencies": {
