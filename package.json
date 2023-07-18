@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jkettmann/graphql-passport.git"
+    "url": "https://github.com/ericmakesapps/graphql-passport.git"
   },
   "keywords": [
     "graphql",
@@ -26,7 +26,10 @@
     "authorization",
     "authentication"
   ],
-  "author": "Johannes Kettmann",
+  "authors": [
+    "Johannes Kettmann <jkettmann@gmx.net>",
+    "Eric Ferreira <eric@ericmakesapps.com>"
+  ],
   "license": "MIT",
   "dependencies": {
     "passport-strategy": "^1.0.0"
