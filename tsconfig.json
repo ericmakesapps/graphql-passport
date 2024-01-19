@@ -1,5 +1,8 @@
 {
   "extends": "./tsconfig-base.json",
+  "compilerOptions": {
+    "outDir": "check-types"
+  },
   "include": ["src/**/*", "__mocks__/**/*"],
   "exclude": ["node_modules"]
 }

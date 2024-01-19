@@ -1,5 +1,9 @@
 # Build dir
-lib
+/lib
+# Type check dir
+/check-types
+# Local config for NX cloud
+/nx-cloud.env
 
 # Don't use yarn
 yarn.lock
@@ -226,3 +230,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/node,windows,macos,visualstudiocode
+
+
+.nx/cache
