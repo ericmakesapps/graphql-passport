@@ -44,7 +44,7 @@ const promisifiedLogout = (req: express.Request, options?: { keepSessionInfo?: b
     req.logout(options, done);
   });
 
-interface CommonRequest<UserObjectType extends Express.User>
+export interface CommonRequest<UserObjectType extends Express.User>
   extends Pick<Context<UserObjectType>, 'isAuthenticated' | 'isUnauthenticated'> {
   user?: UserObjectType;
 }
