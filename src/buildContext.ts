@@ -95,6 +95,7 @@ export interface ContextParams {
 	req: express.Request
 	res: express.Response
 	connection?: ExecutionParams
+	//! This is not used right now. What is it for?
 	payload?: unknown
 }
 
@@ -110,7 +111,6 @@ const buildContext = <
 		req, // set for queries and mutations
 		res, // set for queries and mutations
 		connection, // set for subscriptions
-		// payload, // set for subscriptions
 		...additionalContext
 	} = contextParams
 
@@ -118,7 +118,7 @@ const buildContext = <
 		return buildCommonContext<UserObjectType>(connection.context.req, additionalContext)
 	}
 
-	// The UserObject is without the any in conflict: "'User' is not assignable to type 'UserObjectType'"
+	// We typecast request to any here for now, until we fix up the types here to work right
 	const sharedContext = buildCommonContext<UserObjectType>(req as any, additionalContext)
 
 	return {
