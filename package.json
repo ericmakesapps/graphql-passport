@@ -1,81 +1,104 @@
 {
-  "name": "graphql-passport",
-  "version": "0.6.8",
-  "description": "Strategy and utilities to use passport.js with GraphQL server",
-  "main": "lib/index.js",
-  "scripts": {
-    "build": "tsc --noEmit --pretty && npm run clean && npm run build:types && npm run build:js && npm run build:post",
-    "build:types": "tsc --emitDeclarationOnly --project tsconfig-build.json",
-    "build:js": "babel src --extensions '.ts,.tsx' --source-maps --out-dir lib --ignore 'src/test'",
-    "build:post": "rimraf lib/test",
-    "clean": "rimraf lib",
-    "lint": "tsc --noEmit && eslint \"src/**/*.{js,ts}\" --quiet --fix",
-    "check-types": "tsc",
-    "watch-ts": "tsc -w",
-    "prepare": "npm run lint && npm run test && npm run build",
-    "test": "jest src",
-    "test:watch": "jest src --watch"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ericmakesapps/graphql-passport.git"
-  },
-  "keywords": [
-    "graphql",
-    "passport",
-    "authorization",
-    "authentication"
-  ],
-  "authors": [
-    "Johannes Kettmann <jkettmann@gmx.net>",
-    "Eric Ferreira <eric@ericmakesapps.com>"
-  ],
-  "license": "MIT",
-  "dependencies": {
-    "passport-strategy": "^1.0.0"
-  },
-  "devDependencies": {
-    "@babel/cli": "^7.15.4",
-    "@babel/core": "^7.15.5",
-    "@babel/plugin-transform-runtime": "^7.15.0",
-    "@babel/preset-env": "^7.15.6",
-    "@babel/preset-typescript": "^7.15.0",
-    "@babel/runtime": "^7.15.4",
-    "@types/express-session": "^1.17.4",
-    "@types/jest": "^27.0.1",
-    "@types/supertest": "^2.0.11",
-    "@typescript-eslint/eslint-plugin": "^4.31.1",
-    "@typescript-eslint/parser": "^4.31.1",
-    "apollo-server": "^3.3.0",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^7.32.0",
-    "eslint-config-airbnb": "^18.2.1",
-    "eslint-config-airbnb-typescript": "^14.0.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-import": "^2.24.2",
-    "eslint-plugin-prettier": "^4.0.0",
-    "express-session": "^1.17.2",
-    "jest": "^27.2.0",
-    "passport": "^0.6.0",
-    "prettier": "^2.4.1",
-    "query-string": "^7.0.1",
-    "supertest": "^6.1.6",
-    "typescript": "^4.4.3"
-  },
-  "optionalDependencies": {
-    "@types/express": "^4.17.13",
-    "@types/passport": "^1.0.9",
-    "@types/passport-strategy": "^0.2.35",
-    "@types/ws": "^7.4.7",
-    "express": "^4.17.1",
-    "graphql": "^15.5.3",
-    "subscriptions-transport-ws": "^0.11.0",
-    "ws": "7.x || 8.x"
-  },
-  "peerDependencies": {
-    "express": "4.x",
-    "passport": "0.x",
-    "subscriptions-transport-ws": "0.x",
-    "ws": "7.x || 8.x"
-  }
+	"name": "graphql-passport",
+	"version": "0.6.8",
+	"description": "Strategy and utilities to use passport.js with GraphQL server",
+	"main": "lib/index.js",
+	"scripts": {
+		"build": "nx exec -- npm run _build -- ",
+		"clean": "rimraf lib",
+		"lint": "nx exec -- npm run _lint -- ",
+		"check-types": "nx exec -- tsc",
+		"watch-ts": "tsc -w",
+		"prepublishOnly": "run-p lint test build",
+		"test": "nx exec -- jest src",
+		"test:watch": "jest src --watch",
+		"_build": "npm run clean && tsc --emitDeclarationOnly --project tsconfig-build.json && babel src --extensions '.ts,.tsx' --source-maps --out-dir lib --ignore 'src/test'",
+		"_lint": "eslint \"src/**/*.{js,ts}\" --quiet"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/ericmakesapps/graphql-passport.git"
+	},
+	"keywords": [
+		"graphql",
+		"passport",
+		"authorization",
+		"authentication"
+	],
+	"authors": [
+		"Johannes Kettmann <jkettmann@gmx.net>",
+		"Eric Ferreira <eric@ericmakesapps.com>"
+	],
+	"license": "MIT",
+	"dependencies": {
+		"passport-strategy": "^1.0.0"
+	},
+	"devDependencies": {
+		"@babel/cli": "^7.15.4",
+		"@babel/core": "^7.15.5",
+		"@babel/plugin-transform-runtime": "^7.15.0",
+		"@babel/preset-env": "^7.15.6",
+		"@babel/preset-typescript": "^7.15.0",
+		"@babel/runtime": "^7.15.4",
+		"@nx/workspace": "17.2.8",
+		"@stylistic/eslint-plugin": "^1.5.4",
+		"@trivago/prettier-plugin-sort-imports": "^4.3.0",
+		"@types/express-session": "^1.17.4",
+		"@types/jest": "^27.0.1",
+		"@types/supertest": "^2.0.11",
+		"@typescript-eslint/eslint-plugin": "^6.19.0",
+		"@typescript-eslint/parser": "^6.19.0",
+		"apollo-server": "^3.3.0",
+		"babel-eslint": "^10.1.0",
+		"eslint": "^8.56.0",
+		"eslint-config-airbnb": "^19.0.4",
+		"eslint-config-airbnb-typescript": "^17.1.0",
+		"eslint-plugin-import": "^2.29.1",
+		"eslint-plugin-jest": "^27.6.3",
+		"express-session": "^1.17.2",
+		"jest": "^27.2.0",
+		"npm-run-all": "^4.1.5",
+		"nx": "17.2.8",
+		"passport": "^0.6.0",
+		"prettier": "^3.2.4",
+		"prettier-plugin-package": "^1.4.0",
+		"query-string": "^7.0.1",
+		"supertest": "^6.1.6",
+		"typescript": "^4.4.3"
+	},
+	"optionalDependencies": {
+		"@types/express": "^4.17.13",
+		"@types/passport": "^1.0.9",
+		"@types/passport-strategy": "^0.2.35",
+		"@types/ws": "^7.4.7",
+		"express": "^4.17.1",
+		"graphql": "^15.5.3",
+		"subscriptions-transport-ws": "^0.11.0",
+		"ws": "7.x || 8.x"
+	},
+	"peerDependencies": {
+		"express": "4.x",
+		"passport": "0.x",
+		"subscriptions-transport-ws": "0.x",
+		"ws": "7.x || 8.x"
+	},
+	"nx": {
+		"targets": {
+			"build": {
+				"outputs": [
+					"{projectRoot}/lib"
+				]
+			},
+			"check-types": {
+				"outputs": [
+					"{projectRoot}/check-types"
+				]
+			}
+		}
+	},
+	"jest": {
+		"modulePathIgnorePatterns": [
+			"<rootDir>/check-types"
+		]
+	}
 }

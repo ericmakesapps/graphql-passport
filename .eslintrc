@@ -1,37 +1,58 @@
 {
-  "plugins": [
-    "prettier"
-  ],
-  "extends": [
-    "airbnb-base",
-    "airbnb-typescript/base",
-    "plugin:prettier/recommended"
-  ],
-  "rules": {
-    "comma-dangle": [
-      "error",
-      "always-multiline"
-    ],
-    "prettier/prettier": [
-      "error"
-    ],
-    "@typescript-eslint/indent": 0
-  },
-  "overrides": [
-    {
-      "files": [
-        "**/*.spec.ts",
-        "**/*.test.ts",
-        "**/__mocks__/*.ts"
-      ],
-      "env": {
-        "jest": true
-      }
-    }
-  ],
-  "parserOptions": {
-    "project": [
-      "tsconfig.json"
-    ]
-  }
+	"parserOptions": {
+		"project": "./tsconfig-lint.json"
+	},
+	"extends": [
+		"eslint:recommended",
+		"plugin:@typescript-eslint/recommended",
+		"plugin:jest/recommended"
+	],
+	"parser": "@typescript-eslint/parser",
+	"plugins": ["@typescript-eslint", "jest", "@stylistic"],
+	"root": true,
+	"rules": {
+		"no-extra-semi": ["off"],
+		"no-mixed-spaces-and-tabs": ["off"],
+		"eqeqeq": ["error", "always", { "null": "ignore" }],
+		"@typescript-eslint/no-empty-function": ["off"],
+		"@typescript-eslint/no-explicit-any": ["off"],
+		"@typescript-eslint/no-extra-semi": ["off"],
+		"@typescript-eslint/no-non-null-assertion": ["off"],
+		"@typescript-eslint/promise-function-async": ["error"],
+		"prefer-const": "warn",
+		"object-shorthand": "warn",
+		"no-restricted-imports": [
+			"error",
+			{
+				"paths": [
+					{
+						"name": "mongoose",
+						"importNames": ["model", "db", "connection"],
+						"message": "Please use `connection.*`, importing `connection` from the utils directory instead."
+					},
+					{
+						"name": "fast-ts-helpers/parseDate",
+						"message": "Please use `DateTime` from `luxon` instead, taking care to use the proper time zone (`America/Chicago`)."
+					},
+					{
+						"name": "nodemailer",
+						"message": "Please use `sendMail` from the local `utils` folder instead."
+					}
+				]
+			}
+		],
+		"@stylistic/padding-line-between-statements": [
+			"warn",
+			{
+				"blankLine": "always",
+				"prev": "*",
+				"next": ["let", "const", "return", "block-like"]
+			},
+			{ "blankLine": "always", "prev": ["let", "const", "block-like"], "next": "*" },
+			{ "blankLine": "any", "prev": "case", "next": "case" },
+			{ "blankLine": "any", "prev": "let", "next": "let" },
+			{ "blankLine": "any", "prev": "const", "next": ["const", "type"] },
+			{ "blankLine": "any", "prev": "*", "next": ["export", "iife"] }
+		]
+	}
 }

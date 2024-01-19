@@ -1,9 +1,11 @@
-import { stringify } from 'query-string';
+import { stringify } from "query-string"
 
-export default (urlParams: {}, basePath: string = '/graphql') => {
-  let string = basePath;
-  if (urlParams) {
-    string += `?${stringify(urlParams)}`;
-  }
-  return string;
-};
+function urlString(urlParams: object, basePath: string = "/graphql") {
+	let string = basePath
+	if (urlParams) {
+		string += `?${stringify(urlParams)}`
+	}
+	return string
+}
+
+export default urlString
