@@ -1,0 +1,38 @@
+# This action checks all aspects of the code to ensure it is a compliant change, as
+#   determined by the scirpts we have in npm.
+name: All checks
+
+# Controls when the workflow will run
+on:
+  # Triggers this workflow on push to the main branch
+  push:
+    branches: [main]
+
+  # Triggers this workflow on all pull requests to main
+  pull_request:
+    branches: [main]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm ci && npm run lint
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm ci && CI=true npm run test
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm ci && CI=true npm run build
