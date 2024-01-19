@@ -3,12 +3,12 @@
 Inside your resolvers you can get access to the following functions and attributes inside the context.
 
 ```js
-context.authenticate("graphql-local", { email, password }); // not available for subscriptions
-context.login(user); // not available for subscriptions
-context.logout(); // not available for subscriptions
-context.isAuthenticated();
-context.isUnauthenticated();
-context.getUser();
+context.authenticate("graphql-local", { email, password }) // not available for subscriptions
+context.login(user) // not available for subscriptions
+context.logout() // not available for subscriptions
+context.isAuthenticated()
+context.isUnauthenticated()
+context.getUser()
 ```
 
 `authenticate` and `login` are basically `passport.authenticate` and `passport.login` wrapped in a promise. `user`, `logout`, `isAuthenticated` and `isUnauthenticated` are just copies of the corresponding passport functions and attributes.
@@ -20,42 +20,40 @@ For a full working example including detailed instructions visit this blog post 
 Initialize the `GraphQLLocalStrategy` and create the GraphQL context by using `buildContext`.
 
 ```js
-import express from "express";
-import session from "express-session";
-import { ApolloServer } from "apollo-server-express";
-import passport from "passport";
-import { GraphQLLocalStrategy, buildContext } from "graphql-passport";
+import { ApolloServer } from "apollo-server-express"
+import express from "express"
+import session from "express-session"
+import { buildContext, GraphQLLocalStrategy } from "graphql-passport"
+import passport from "passport"
 
 passport.use(
-  new GraphQLLocalStrategy((email, password, done) => {
-    // Adjust this callback to your needs
-    const users = User.getUsers();
-    const matchingUser = users.find(
-      user => email === user.email && password === user.password
-    );
-    const error = matchingUser ? null : new Error("no matching user");
-    done(error, matchingUser);
-  })
-);
+	new GraphQLLocalStrategy((email, password, done) => {
+		// Adjust this callback to your needs
+		const users = User.getUsers()
+		const matchingUser = users.find(
+			(user) => email === user.email && password === user.password
+		)
+		const error = matchingUser ? null : new Error("no matching user")
+		done(error, matchingUser)
+	})
+)
 
-const app = express();
-app.use(session(options)); // optional
-app.use(passport.initialize());
-app.use(passport.session()); // if session is used
+const app = express()
+app.use(session(options)) // optional
+app.use(passport.initialize())
+app.use(passport.session()) // if session is used
 
 const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-  context: ({ req, res }) => buildContext({ req, res, User })
-});
+	typeDefs,
+	resolvers,
+	context: ({ req, res }) => buildContext({ req, res, User })
+})
 
-server.applyMiddleware({ app, cors: false });
+server.applyMiddleware({ app, cors: false })
 
 app.listen({ port: PORT }, () => {
-  console.log(
-    `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`
-  );
-});
+	console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`)
+})
 ```
 
 If you need to pass the `request` object into `GraphQLLocalStrategy`, you can pass the `passReqToCallback` option in an object as the first argument, then add it as the first argument of the verify function:
@@ -74,24 +72,24 @@ Inside your resolvers you can call `context.authenticate` to authenticate the us
 
 ```js
 const resolvers = {
-  Query: {
-    currentUser: (parent, args, context) => context.getUser()
-  },
-  Mutation: {
-    login: async (parent, { email, password }, context) => {
-      // instead of email you can pass username as well
-      const { user, info } = await context.authenticate("graphql-local", {
-        email,
-        password
-      });
+	Query: {
+		currentUser: (parent, args, context) => context.getUser()
+	},
+	Mutation: {
+		login: async (parent, { email, password }, context) => {
+			// instead of email you can pass username as well
+			const { user, info } = await context.authenticate("graphql-local", {
+				email,
+				password
+			})
 
-      // only required if express-session is used
-      context.login(user);
+			// only required if express-session is used
+			context.login(user)
 
-      return { user };
-    }
-  }
-};
+			return { user }
+		}
+	}
+}
 ```
 
 ## Usage with subscriptions
@@ -170,8 +168,8 @@ First, we need to define the user type. In this example the type is defined in a
 
 ```ts
 export type MyUser = {
-  firstName: string;
-  lastName: string;
+	firstName: string
+	lastName: string
 }
 ```
 
@@ -192,18 +190,18 @@ export interface ProjectSubscriptionContext extends PassportSubscriptionContext<
 The `MyContext` type can now be used inside the resolvers. Below you can see an example of a resolver that concatenates the user's first and last name defined above.
 
 ```ts
-import { MyContext } from './path/to/MyContext';
+import { MyContext } from "./path/to/MyContext"
 
 const resolvers = {
-  Query: {
-    User: {
-      name: (parent: unknown, data: SomeData, context: MyContext) => {
-        const user = context.getUser();
-        return `${user.firstName} ${user.lastName}`;
-      },
-    },
-  },
-};
+	Query: {
+		User: {
+			name: (parent: unknown, data: SomeData, context: MyContext) => {
+				const user = context.getUser()
+				return `${user.firstName} ${user.lastName}`
+			}
+		}
+	}
+}
 ```
 
 ### Working with data sources
