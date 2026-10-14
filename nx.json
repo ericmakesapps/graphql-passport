@@ -1,20 +1,10 @@
 {
 	"targetDefaults": {
-		"build": {
-			"cache": true
-		},
-		"lint": {
-			"cache": true
-		},
-		"check-types": {
-			"cache": true
-		},
-		"test": {
-			"cache": true
-		}
+		"build": { "cache": true },
+		"lint": { "cache": true },
+		"check-types": { "cache": true },
+		"test": { "cache": true }
 	},
-	"affected": {
-		"defaultBase": "origin/main"
-	},
-	"nxCloudAccessToken": "YTY3MmFhOTItMzlhMy00Y2QwLTk0MGItN2Y2YTA5NWM3NzcwfHJlYWQ="
+	"affected": { "defaultBase": "origin/main" },
+	"nxCloudAccessToken": "YmYxYmVlOGUtN2I2Ny00NGZhLThhYTctNjY2M2I5ZDk3NTk2fHJlYWQtd3JpdGU="
 }
