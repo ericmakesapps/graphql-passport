@@ -1,9 +1,7 @@
-import { stringify } from "query-string"
-
 function urlString(urlParams: object, basePath: string = "/graphql") {
 	let string = basePath
 	if (urlParams) {
-		string += `?${stringify(urlParams)}`
+		string += `?${new URLSearchParams(urlParams as Record<string, string>).toString()}`
 	}
 	return string
 }

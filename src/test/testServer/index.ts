@@ -1,4 +1,5 @@
-import { ApolloServer } from "apollo-server-express"
+import { ApolloServer } from "@apollo/server"
+import { expressMiddleware } from "@as-integrations/express4"
 import express, { Express } from "express"
 import session from "express-session"
 import { agent } from "supertest"
@@ -6,7 +7,7 @@ import { agent } from "supertest"
 import { buildContext } from "../../index"
 
 import { LaunchAPI } from "./LaunchAPI"
-import { MyDataSources } from "./MyContext"
+import { MyContext } from "./MyContext"
 import resolvers from "./resolvers"
 import setupPassport from "./setupPassport"
 import typeDefs from "./typeDefs"
@@ -28,25 +29,32 @@ export const startServer = async (): Promise<Express> => {
 	app.use(passport.initialize())
 	app.use(passport.session())
 
-	// Silly but required that dataSources is mapped
-	type MappedType<T> = {
-		[P in keyof T]: T[P]
-	}
-
-	const server = new ApolloServer({
+	const server = new ApolloServer<MyContext>({
 		resolvers,
 		typeDefs,
-		dataSources: () =>
-			({
-				userAPI: UserAPI.getInstance(),
-				launchAPI: new LaunchAPI()
-			}) as MappedType<MyDataSources>,
-		context: buildContext
+		allowBatchedHttpRequests: false,
+		csrfPrevention: false
 	})
 
 	await server.start()
 
-	server.applyMiddleware({ app, cors: false })
+	app.use(
+		"/graphql",
+		express.json(),
+		expressMiddleware(server, {
+			context: async ({ req, res }: { req: express.Request; res: express.Response }) => {
+				const ctx = buildContext({ req, res })
+				return {
+					...ctx,
+					logOut: ctx.logout,
+					dataSources: {
+						userAPI: UserAPI.getInstance(),
+						launchAPI: new LaunchAPI()
+					}
+				} as unknown as MyContext
+			}
+		})
+	)
 
 	return app
 }

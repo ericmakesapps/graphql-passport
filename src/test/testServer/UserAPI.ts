@@ -1,5 +1,3 @@
-import { DataSource } from "apollo-datasource"
-
 export interface User {
 	id: number
 	name: string
@@ -7,11 +5,10 @@ export interface User {
 	permission: "admin" | "basic"
 }
 
-export class UserAPI extends DataSource {
+export class UserAPI {
 	private users: User[]
 
 	constructor() {
-		super()
 		this.users = [
 			{
 				id: 1,

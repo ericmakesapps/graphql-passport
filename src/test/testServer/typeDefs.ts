@@ -1,6 +1,4 @@
-import { gql } from "apollo-server"
-
-const typeDefs = gql`
+const typeDefs = /* GraphQL */ `
 	type Query {
 		"""
 		User has to be authenticated to get access to these

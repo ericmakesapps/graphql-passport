@@ -2,8 +2,8 @@
 /lib
 # Type check dir
 /check-types
-# Local config for NX cloud
-/nx-cloud.env
+# Local cache for NX
+/.nx
 
 # Don't use yarn
 yarn.lock

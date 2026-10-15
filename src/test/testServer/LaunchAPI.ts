@@ -1,15 +1,12 @@
-import { DataSource } from "apollo-datasource"
-
 export interface Launch {
 	id: number
 	name: string
 }
 
-export class LaunchAPI extends DataSource {
+export class LaunchAPI {
 	private launches: Launch[]
 
 	constructor() {
-		super()
 		this.launches = [
 			{ id: 1, name: "rocket 1" },
 			{ id: 2, name: "rocket 2" }

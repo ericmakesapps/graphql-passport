@@ -7,7 +7,8 @@ import { UserAPI, User as UserModel } from "./UserAPI"
 
 declare global {
 	// eslint-disable-next-line @typescript-eslint/no-namespace
-	module Express {
+	namespace Express {
+		// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 		interface User extends UserModel {}
 	}
 }

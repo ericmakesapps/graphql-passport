@@ -1,4 +1,4 @@
-import { AuthenticationError, ForbiddenError } from "apollo-server"
+import { GraphQLError } from "graphql"
 
 import { MyContext } from "./MyContext"
 
@@ -6,7 +6,7 @@ const resolvers = {
 	Query: {
 		launch(_: unknown, __: unknown, { isAuthenticated }: MyContext) {
 			if (!isAuthenticated()) {
-				throw new ForbiddenError("You need to be logged in to access launch queries")
+				throw new GraphQLError("You need to be logged in to access launch queries")
 			}
 
 			return {
@@ -18,7 +18,7 @@ const resolvers = {
 	},
 	LaunchQueries: {
 		find(
-			parent: { id: "LAUNCH_QUERIES" },
+			_parent: { id: "LAUNCH_QUERIES" },
 			{ id }: { id: string },
 			{ dataSources: { launchAPI } }: MyContext
 		) {
@@ -36,7 +36,7 @@ const resolvers = {
 				password
 			})
 			if (!user) {
-				throw new AuthenticationError(`Failed to login: ${info}`)
+				throw new GraphQLError(`Failed to login: ${info}`)
 			}
 			await login(user)
 			return user
@@ -52,11 +52,11 @@ const resolvers = {
 		launch(_: unknown, __: unknown, { isAuthenticated, getUser }: MyContext) {
 			const user = getUser()
 			if (!isAuthenticated() || !user) {
-				throw new ForbiddenError("You need to be logged in to access launch mutations")
+				throw new GraphQLError("You need to be logged in to access launch mutations")
 			}
 
 			if (user.permission !== "admin") {
-				throw new ForbiddenError("You have insufficient privileges for launch mutations")
+				throw new GraphQLError("You have insufficient privileges for launch mutations")
 			}
 
 			return {
@@ -66,7 +66,7 @@ const resolvers = {
 	},
 	LaunchMutations: {
 		add(
-			parent: { id: "LAUNCH_MUTATIONS" },
+			_parent: { id: "LAUNCH_MUTATIONS" },
 			{ name }: { name: string },
 			{ dataSources: { launchAPI } }: MyContext
 		) {
