@@ -1,6 +1,6 @@
-import { Response } from "express"
+import type { Response } from "express"
 
-import { WebSocket } from "./types"
+import type { WebSocket } from "./types"
 
 type MiddlewareFns = (
 	req: WebSocket["upgradeReq"],

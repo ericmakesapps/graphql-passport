@@ -1,7 +1,7 @@
-import { Request as ExpressRequest } from "express"
+import type { Request as ExpressRequest } from "express"
 import { Strategy as PassportStrategy } from "passport-strategy"
 
-import { InfoArgument, PassportContext } from "./types"
+import type { InfoArgument, PassportContext } from "./types"
 
 type DoneFn = (error: any, user?: any, info?: InfoArgument) => void
 type VerifyFn = (username: unknown, password: unknown, done: DoneFn) => void

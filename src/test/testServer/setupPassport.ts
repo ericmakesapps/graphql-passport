@@ -1,7 +1,7 @@
 import passport from "passport"
 
 import { GraphQLLocalStrategy } from "../../index"
-import { InfoArgument } from "../../types"
+import type { InfoArgument } from "../../types"
 
 import { UserAPI, User as UserModel } from "./UserAPI"
 

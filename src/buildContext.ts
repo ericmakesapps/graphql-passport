@@ -1,8 +1,8 @@
-import express from "express"
-import passport, { AuthenticateOptions } from "passport"
-import { ExecutionParams } from "subscriptions-transport-ws"
+import type express from "express"
+import passport, { type AuthenticateOptions } from "passport"
+import type { ExecutionParams } from "subscriptions-transport-ws"
 
-import { AuthenticateReturn, InfoArgument } from "./types"
+import type { AuthenticateReturn, InfoArgument } from "./types"
 
 const promisifiedAuthentication = async <UserObjectType extends Express.User>(
 	req: express.Request,

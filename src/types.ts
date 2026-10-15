@@ -1,7 +1,7 @@
-import { Request as ExpressRequest } from "express"
-import { IncomingMessage } from "http"
-import { ConnectionContext } from "subscriptions-transport-ws"
-import ws from "ws"
+import type { Request as ExpressRequest } from "express"
+import type { IncomingMessage } from "http"
+import type { ConnectionContext } from "subscriptions-transport-ws"
+import type ws from "ws"
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface AuthInfoTemplate {}
