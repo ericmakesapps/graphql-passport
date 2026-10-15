@@ -44,6 +44,7 @@ class GraphQLLocalStrategy<
 			this.verify = verify
 			this.passReqToCallback = options.passReqToCallback
 		}
+
 		if (!this.verify) {
 			throw new TypeError("GraphQLLocalStrategy requires a verify callback")
 		}
@@ -67,9 +68,11 @@ class GraphQLLocalStrategy<
 			if (err) {
 				return this.error(err)
 			}
+
 			if (!user) {
 				return this.fail(info, 401)
 			}
+
 			return this.success(user, info)
 		}
 

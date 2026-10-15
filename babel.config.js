@@ -11,6 +11,9 @@ module.exports = {
 		"@babel/typescript"
 	],
 	env: {
+		build: {
+			plugins: [["./babel-plugin-add-js-extension.js"]]
+		},
 		test: {
 			plugins: ["@babel/plugin-transform-runtime"]
 		}

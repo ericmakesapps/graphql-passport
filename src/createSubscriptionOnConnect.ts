@@ -18,11 +18,13 @@ const executeMiddlewares = (
 ) => {
 	if (middlewares.length === 0) {
 		const { upgradeReq } = webSocket
+
 		resolve({ req: upgradeReq })
 	} else {
 		const nextMiddleware = middlewares[0]
 		const remainingMiddlewares = middlewares.slice(1)
 		const response = {} as Response
+
 		nextMiddleware(webSocket.upgradeReq, response, () =>
 			executeMiddlewares(remainingMiddlewares, webSocket, resolve)
 		)
